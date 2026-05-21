@@ -2,898 +2,511 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MS 2024 Diagnostic Assistant</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Anthropic Sans",system-ui,sans-serif;font-size:15px;color:var(--color-text-primary,#1a1a1a);background:transparent;padding:0 0 2rem}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.25rem}
-.tab{padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary,#ccc);background:transparent;font-size:13px;cursor:pointer;color:var(--color-text-secondary,#555);transition:all .15s}
-.tab.active{background:linear-gradient(135deg,#1a56a0,#0e8a6e);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(26,86,160,0.25)}
-.tab:hover:not(.active){background:var(--color-background-secondary,#f5f5f5)}
-.section{display:none}.section.active{display:block}
-
-.grade-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:1rem}
-.grade-card{border-radius:10px;border:2px solid transparent;padding:14px;cursor:pointer;transition:all .15s}
-.grade-card:hover{filter:brightness(.97)}
-.grade-card.expanded{box-shadow:0 2px 12px rgba(0,0,0,.13)}
-.grade-label{font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;padding:3px 8px;border-radius:4px;display:inline-block}
-.grade-title{font-size:13.5px;font-weight:500;margin-bottom:4px}
-.grade-details{font-size:13px;line-height:1.6;margin-top:8px;padding-top:8px;border-top:1px solid rgba(0,0,0,.1)}
-.grade-details ul{padding-left:1.2rem}.grade-details li{margin-bottom:3px}
-
-.gc1{background:#e6f9ee;border-color:#4caf7d;color:#155c30}
-.gc1 .grade-label{background:#4caf7d;color:#fff}
-.gc1 .grade-details{color:#1d6b38}
-.gc2{background:#e3f0ff;border-color:#2e7de0;color:#0d3a7a}
-.gc2 .grade-label{background:#2e7de0;color:#fff}
-.gc2 .grade-details{color:#1a4a90}
-.gc3{background:#fff8dc;border-color:#e6a817;color:#6b4800}
-.gc3 .grade-label{background:#e6a817;color:#fff}
-.gc3 .grade-details{color:#7a5200}
-.gc4{background:#fff0e0;border-color:#e07020;color:#7a3200}
-.gc4 .grade-label{background:#e07020;color:#fff}
-.gc4 .grade-details{color:#8a3800}
-.gc5{background:#fde8e8;border-color:#d03030;color:#7a0a0a}
-.gc5 .grade-label{background:#d03030;color:#fff}
-.gc5 .grade-details{color:#8a0e0e}
-
-.algo-box{border-radius:12px;padding:16px;margin-bottom:12px;border:none}
-.algo-box-blue{background:linear-gradient(135deg,#e8f1ff,#d6eaff);border-left:4px solid #2e7de0}
-.algo-box-teal{background:linear-gradient(135deg,#e0f7f2,#ccf2ea);border-left:4px solid #0e8a6e}
-.algo-box-amber{background:linear-gradient(135deg,#fff8e1,#fff0c0);border-left:4px solid #e6a817}
-.algo-box-red{background:linear-gradient(135deg,#fff0f0,#ffe0e0);border-left:4px solid #d03030}
-.algo-box-purple{background:linear-gradient(135deg,#f3eeff,#e8deff);border-left:4px solid #7c4dca}
-.algo-title{font-size:14px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.algo-badge{font-size:11px;padding:2px 8px;border-radius:4px;background:rgba(0,0,0,.1);color:inherit}
-.algo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.algo-col{font-size:13px}.algo-col-title{font-weight:500;margin-bottom:4px;font-size:12px;opacity:.75}
-.algo-col ul{padding-left:1.2rem}.algo-col li{margin-bottom:3px;line-height:1.5}
-.result-tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;margin-top:8px}
-.result-low{background:#4caf7d;color:#fff}.result-high{background:#d03030;color:#fff}
-
-.asu-wrap{display:grid;grid-template-columns:60px 1fr;gap:0;border-radius:12px;overflow:hidden;margin-bottom:8px}
-.asu-letter{display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;padding:16px 10px}
-.asu-content{padding:14px}.asu-content h3{font-size:14px;font-weight:500;margin-bottom:6px}
-.asu-content p{font-size:13px;line-height:1.55}
-
-.win-card{border-radius:10px;padding:14px;border:none}
-
-.pearl-box{border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:10px;font-size:13px;line-height:1.6;border-left:4px solid}
-.pearl-box b{font-weight:500}
-
-.lex-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px}
-.lex-item{border-radius:10px;padding:13px;border:none}
-.lex-term{font-size:13px;font-weight:500;margin-bottom:4px}
-.lex-def{font-size:12.5px;line-height:1.55}
-
-.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
-.compare-card{border-radius:12px;padding:14px;border:none}
-.compare-card h4{font-size:13px;font-weight:500;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.3)}
-.compare-card ul{font-size:12.5px;padding-left:1.2rem}.compare-card li{margin-bottom:4px;line-height:1.5}
-
-.calc-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.calc-panel{border-radius:12px;overflow:hidden}
-.calc-head{padding:12px 14px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px;color:#fff}
-.calc-body{padding:12px 14px;background:var(--color-background-primary,#fff);border:0.5px solid var(--color-border-tertiary,#ddd);border-top:none;border-radius:0 0 12px 12px}
-.calc-q{margin-bottom:10px}
-.calc-q label{font-size:13px;font-weight:500;display:block;margin-bottom:4px}
-.calc-q .opts{display:flex;gap:6px;flex-wrap:wrap}
-.calc-opt{padding:5px 10px;border-radius:6px;border:0.5px solid var(--color-border-secondary,#ccc);font-size:12.5px;cursor:pointer;background:transparent;color:var(--color-text-primary,#1a1a1a);transition:all .12s}
-.calc-opt.sel{background:linear-gradient(135deg,#1a56a0,#0e8a6e);color:#fff;border-color:transparent}
-.calc-opt:hover:not(.sel){background:var(--color-background-secondary,#f5f5f5)}
-.calc-result{margin-top:12px;padding:12px;border-radius:10px;font-size:13px;line-height:1.6;border:none}
-.calc-result .grade-big{font-size:20px;font-weight:500;margin-bottom:4px}
-.calc-reset{font-size:12px;color:var(--color-text-secondary,#555);background:none;border:none;cursor:pointer;padding:4px 0;display:block;margin-top:8px;text-decoration:underline}
-
-.report-box{border:0.5px solid var(--color-border-tertiary,#ddd);border-radius:12px;overflow:hidden;background:var(--color-background-primary,#fff);margin-bottom:12px}
-.report-head{padding:12px 14px;font-size:14px;font-weight:500;color:#fff}
-.report-body{padding:14px}
-.report-field{margin-bottom:10px}
-.report-field label{font-size:12px;font-weight:500;color:var(--color-text-secondary,#555);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
-.report-field input,.report-field select,.report-field textarea{width:100%;padding:7px 10px;border-radius:6px;border:0.5px solid var(--color-border-secondary,#ccc);font-size:13px;background:var(--color-background-primary,#fff);color:var(--color-text-primary,#1a1a1a);font-family:inherit}
-.report-field textarea{resize:vertical;min-height:60px}
-.report-out{background:var(--color-background-secondary,#f9f9f8);border-radius:8px;padding:14px;font-size:12.5px;line-height:1.8;font-family:"Courier New",monospace;white-space:pre-wrap;border:0.5px solid var(--color-border-tertiary,#ddd);min-height:100px}
-.btn-primary{padding:8px 18px;border-radius:8px;border:none;background:linear-gradient(135deg,#1a56a0,#0e8a6e);color:#fff;font-size:13px;cursor:pointer;font-family:inherit;box-shadow:0 2px 8px rgba(26,86,160,.25)}
-.btn-sec{padding:8px 18px;border-radius:8px;border:0.5px solid var(--color-border-secondary,#ccc);background:transparent;color:var(--color-text-primary,#1a1a1a);font-size:13px;cursor:pointer;font-family:inherit;margin-left:8px}
-.btn-sec:disabled{opacity:.5;cursor:not-allowed}
-.section-label{font-size:12px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin:1.2rem 0 .7rem;padding:4px 10px;border-radius:4px;display:inline-block}
-
-.copy-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a56a0;color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999}
-.copy-toast.show{opacity:1}
-
-@media(max-width:520px){.algo-grid,.compare-grid,.calc-wrap{grid-template-columns:1fr}}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#f8f9fb;color:#1a1a2e;min-height:100vh}
+  .header{background:linear-gradient(135deg,#1a237e 0%,#283593 60%,#1565c0 100%);color:#fff;padding:28px 32px 22px;position:relative;overflow:hidden}
+  .header::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;background:rgba(255,255,255,0.05);border-radius:50%}
+  .header h1{font-size:22px;font-weight:700;margin-bottom:4px;letter-spacing:-.3px}
+  .header .sub{font-size:13px;opacity:.85;margin-bottom:6px}
+  .header .dev{font-size:12px;opacity:.7;font-style:italic}
+  .ref-link{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12px;color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.15);padding:5px 10px;border-radius:20px;text-decoration:none;border:1px solid rgba(255,255,255,0.25);transition:background .2s}
+  .ref-link:hover{background:rgba(255,255,255,0.25)}
+  .disclaimer{background:#fff3e0;border-left:4px solid #f57c00;padding:10px 14px;margin:14px 16px 0;border-radius:4px;font-size:12px;color:#e65100;display:flex;gap:8px;align-items:flex-start}
+  .disclaimer i{font-size:16px;flex-shrink:0;margin-top:1px}
+  .scenario-nav{display:flex;gap:8px;padding:14px 16px;overflow-x:auto;flex-wrap:wrap;background:#fff;border-bottom:1px solid #e8eaf6}
+  .scenario-btn{padding:7px 14px;border-radius:20px;border:1.5px solid #c5cae9;background:#fff;font-size:12px;font-weight:600;color:#3949ab;cursor:pointer;white-space:nowrap;transition:all .2s}
+  .scenario-btn.active,.scenario-btn:hover{background:#3949ab;color:#fff;border-color:#3949ab}
+  .content{padding:16px;max-width:900px;margin:0 auto}
+  .scenario-panel{display:none}
+  .scenario-panel.active{display:block}
+  .panel-title{font-size:17px;font-weight:700;color:#1a237e;margin-bottom:4px}
+  .panel-desc{font-size:13px;color:#5c6bc0;margin-bottom:16px}
+  .step-card{background:#fff;border:1px solid #e8eaf6;border-radius:10px;padding:16px;margin-bottom:14px}
+  .step-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .step-num{width:28px;height:28px;background:#3949ab;color:#fff;border-radius:50%;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .step-title{font-size:14px;font-weight:700;color:#1a237e}
+  .criteria-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px}
+  .criteria-item{border:1.5px solid #e8eaf6;border-radius:8px;padding:10px 12px;cursor:pointer;transition:all .2s;user-select:none;position:relative}
+  .criteria-item:hover{border-color:#7986cb;background:#f3f4fd}
+  .criteria-item.selected{border-color:#3949ab;background:#e8eaf6}
+  .criteria-item.selected::after{content:'✓';position:absolute;top:8px;right:10px;color:#3949ab;font-weight:700;font-size:14px}
+  .criteria-item .ci-title{font-size:13px;font-weight:600;color:#1a237e;margin-bottom:3px}
+  .criteria-item .ci-desc{font-size:11px;color:#7986cb}
+  .result-box{border-radius:10px;padding:14px 16px;margin-top:14px;display:none}
+  .result-box.positive{background:#e8f5e9;border:1.5px solid #66bb6a}
+  .result-box.negative{background:#fff3e0;border:1.5px solid #ffa726}
+  .result-box.warning{background:#fce4ec;border:1.5px solid #ef5350}
+  .result-title{font-size:15px;font-weight:700;margin-bottom:6px}
+  .result-box.positive .result-title{color:#2e7d32}
+  .result-box.negative .result-title{color:#e65100}
+  .result-box.warning .result-title{color:#c62828}
+  .result-text{font-size:13px;line-height:1.6}
+  .result-box.positive .result-text{color:#1b5e20}
+  .result-box.negative .result-text{color:#bf360c}
+  .result-box.warning .result-text{color:#b71c1c}
+  .check-group{display:flex;flex-direction:column;gap:8px}
+  .check-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e8eaf6;border-radius:8px;cursor:pointer;transition:all .2s}
+  .check-item:hover{border-color:#7986cb;background:#f3f4fd}
+  .check-item.checked{border-color:#3949ab;background:#e8eaf6}
+  .check-box{width:18px;height:18px;border:2px solid #9fa8da;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+  .check-item.checked .check-box{background:#3949ab;border-color:#3949ab}
+  .check-item.checked .check-box::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+  .check-label{font-size:13px;color:#1a1a2e}
+  .check-label strong{font-weight:600;color:#1a237e}
+  .btn-evaluate{background:#3949ab;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:14px;width:100%;transition:background .2s}
+  .btn-evaluate:hover{background:#283593}
+  .btn-reset{background:transparent;color:#7986cb;border:1.5px solid #c5cae9;padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;margin-top:8px;width:100%;transition:all .2s}
+  .btn-reset:hover{border-color:#3949ab;color:#3949ab}
+  .info-box{background:#e8eaf6;border-left:3px solid #3949ab;padding:10px 14px;border-radius:4px;font-size:12px;color:#3949ab;margin-bottom:12px}
+  .info-box.amber{background:#fff8e1;border-left-color:#f9a825;color:#f57f17}
+  .location-count{display:inline-block;background:#3949ab;color:#fff;border-radius:12px;font-size:12px;font-weight:700;padding:3px 10px;margin-left:8px}
+  .age-select{width:100%;padding:8px 12px;border:1.5px solid #c5cae9;border-radius:8px;font-size:13px;color:#1a1a2e;background:#fff;margin-bottom:0;cursor:pointer}
+  .tag{display:inline-block;background:#e8eaf6;color:#3949ab;font-size:11px;font-weight:600;padding:3px 8px;border-radius:12px;margin-right:4px;margin-bottom:4px}
+  .tag.green{background:#e8f5e9;color:#2e7d32}
+  .tag.orange{background:#fff3e0;color:#e65100}
+  .summary-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+  .summary-table th{background:#e8eaf6;color:#3949ab;padding:7px 10px;text-align:left;font-weight:600}
+  .summary-table td{padding:7px 10px;border-bottom:1px solid #f0f1f8;color:#1a1a2e;vertical-align:top}
+  .summary-table tr:last-child td{border-bottom:none}
+  .ped-section{display:none;border:1.5px solid #c5cae9;border-radius:8px;padding:14px;margin-top:12px;background:#f8f9ff}
+  .ped-section.visible{display:block}
+  .ped-section-title{font-size:13px;font-weight:700;color:#3949ab;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+  .section-divider{border:none;border-top:1.5px dashed #c5cae9;margin:16px 0}
+  @media(max-width:600px){.criteria-grid{grid-template-columns:1fr 1fr}.header h1{font-size:18px}}
 </style>
 </head>
 <body>
-<div id="copy-toast" class="copy-toast">✓ Copied to clipboard</div>
 
-<div style="padding:1.5rem 1rem 0">
-
-<!-- HEADER -->
-<div style="background:linear-gradient(135deg,#1a56a0 0%,#0e8a6e 100%);border-radius:14px;padding:22px 24px 18px;margin-bottom:1.5rem;position:relative;overflow:hidden">
-  <div style="position:absolute;top:-30px;right:-30px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)"></div>
-  <div style="position:absolute;bottom:-40px;left:60px;width:110px;height:110px;border-radius:50%;background:rgba(255,255,255,.05)"></div>
-  <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-    <div style="background:rgba(255,255,255,.18);border-radius:10px;padding:8px 11px;font-size:22px;line-height:1">🩻</div>
-    <div>
-      <h1 style="color:#fff;font-size:20px;font-weight:500;margin:0;line-height:1.25">Pediatric trauma imaging guidelines</h1>
-      <p style="color:rgba(255,255,255,.82);font-size:13px;margin:3px 0 0">Developed by <b style="font-weight:500">Prof. Shaimaa AbdelSattar</b></p>
-    </div>
-  </div>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.18)">
-    <a href="https://www.aast.org/resources/trauma-tools/injury-scoring-scale.html" target="_blank" style="background:rgba(255,255,255,.15);color:#fff;font-size:12px;padding:3px 10px;border-radius:20px;text-decoration:none;border:1px solid rgba(255,255,255,.25)">AAST-OIS 2018 update ↗</a>
-    <span style="background:rgba(255,255,255,.15);color:#fff;font-size:12px;padding:3px 10px;border-radius:20px">Pediatric Radiology 2025</span>
-    <a href="https://link.springer.com/article/10.1007/s00247-025-06321-3" style="background:rgba(255,220,80,.25);color:#ffe97a;font-size:12px;padding:3px 10px;border-radius:20px;text-decoration:none;border:1px solid rgba(255,220,80,.4)" target="_blank">📄 Mohammad et al., 2025 ↗</a>
-  </div>
+<div class="header">
+  <div class="sub">Multiple Sclerosis Diagnostic Tool</div>
+  <h1><i class="ti ti-brain" style="font-size:20px;vertical-align:-2px;margin-right:6px"></i>2024 McDonald Criteria — MS Diagnosis Assistant</h1>
+  <div class="dev">Developed by Prof. Shaimaa AbdelSattar</div>
+  <a class="ref-link" href="https://drive.google.com/file/d/1t_90yIt19mJsyoIvIrR9hKSuJjlRI14s/view?usp=drivesdk" target="_blank">
+    <i class="ti ti-external-link" style="font-size:13px"></i>
+    Montalban et al., Lancet Neurol 2025;24:850–65
+  </a>
 </div>
 
-<div class="tabs">
-  <button class="tab active" onclick="show('ct-algo',this)" style="background:linear-gradient(135deg,#1a56a0,#0e8a6e);color:#fff;border-color:transparent">CT algorithms</button>
-  <button class="tab" onclick="show('liver',this)">Liver</button>
-  <button class="tab" onclick="show('spleen',this)">Spleen</button>
-  <button class="tab" onclick="show('kidney',this)">Kidney</button>
-  <button class="tab" onclick="show('pancreas',this)">Pancreas</button>
-  <button class="tab" onclick="show('bladder',this)">Bladder</button>
-  <button class="tab" onclick="show('calc',this)">Grade calculator</button>
-  <button class="tab" onclick="show('asu',this)">ASU+ approach</button>
-  <button class="tab" onclick="show('lexicon',this)">Lexicon</button>
-  <button class="tab" onclick="show('report',this)">Report template</button>
-  <button class="tab" onclick="show('pearls',this)">Peds vs adults</button>
+<div class="disclaimer">
+  <i class="ti ti-alert-triangle"></i>
+  <span><strong>Clinical Disclaimer:</strong> This tool is intended to support — not replace — clinical judgment. Diagnosis of MS must be made by a qualified physician who integrates clinical findings, imaging, and laboratory results in the appropriate patient context. Always exclude better explanations before applying these criteria.</span>
 </div>
 
-<!-- CT ALGORITHMS -->
-<div id="ct-algo" class="section active">
-  <p style="font-size:13px;color:var(--color-text-secondary,#666);margin-bottom:1rem;line-height:1.6">CT is the gold standard for haemodynamically <b style="font-weight:500">stable</b> children with suspected abdominal injury. Summary of common imaging algorithms from <b style="font-weight:500">Table 1, Mohammad et al., Pediatric Radiology 2025</b>.</p>
-  <p style="font-size:11.5px;color:var(--color-text-secondary,#666);margin-bottom:1rem;font-style:italic">ALT = alanine aminotransferase · AST = aspartate aminotransferase · BATiC = blunt abdominal trauma in children · FAST = focused assessment with sonography in trauma · Hgb = haemoglobin · HPF = high power field · LDH = lactate dehydrogenase · PECARN = Pediatric Emergency Care Applied Research Network · RBC = red blood corpuscles · US = ultrasound · WBC = white blood cells</p>
-
-  <div style="overflow-x:auto;margin-bottom:1.4rem;border-radius:12px;border:1px solid var(--color-border-tertiary,#ddd)">
-  <table style="width:100%;border-collapse:collapse;font-size:12.5px;min-width:680px">
-    <thead>
-      <tr style="background:linear-gradient(135deg,#1a56a0,#0e8a6e)">
-        <th style="padding:10px 14px;color:#fff;text-align:left;font-weight:500;width:22%">Algorithm</th>
-        <th style="padding:10px 14px;color:#fff;text-align:left;font-weight:500;width:38%">Parameters</th>
-        <th style="padding:10px 14px;color:#fff;text-align:left;font-weight:500;width:40%">Remarks</th>
-      </tr>
-    </thead>
-    <tbody>
-
-      <!-- BATiC -->
-      <tr style="background:#fff8dc;border-bottom:2px solid #ffe9a0">
-        <td style="padding:12px 14px;vertical-align:top;border-right:1px solid #ffe9a0">
-          <div style="font-size:13px;font-weight:500;color:#6b4800;margin-bottom:4px">The blunt abdominal trauma in children (BATiC)</div>
-          <div style="font-size:11px;color:#8a5800">[Ref 26] Karam et al. 2009</div>
-        </td>
-        <td style="padding:12px 14px;color:#6b4800;vertical-align:top;border-right:1px solid #ffe9a0">
-          <table style="width:100%;border-collapse:collapse;font-size:12px">
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0;color:#6b4800">Abnormal abdominal Doppler US</td><td style="padding:3px 0 3px 6px;font-weight:500;color:#6b4800;text-align:right;white-space:nowrap">4 points</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">Abdominal pain</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">2 points</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">Signs of peritoneal irritation</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">2 points</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">Haemodynamic instability</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">2 points</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">AST &gt; 60 IU/L</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">2 points</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">ALT &gt; 25 IU/L</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">2 points</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">WBC count &gt; 9.5 g/L</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">1 point</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">LDH &gt; 330 IU/L</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">1 point</td></tr>
-            <tr style="border-bottom:1px solid #ffe9a0"><td style="padding:3px 6px 3px 0">Lipase &gt; 30 IU/L</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">1 point</td></tr>
-            <tr><td style="padding:3px 6px 3px 0">Creatinine &gt; 50 µg/L</td><td style="padding:3px 0 3px 6px;font-weight:500;text-align:right;white-space:nowrap">1 point</td></tr>
-          </table>
-        </td>
-        <td style="padding:12px 14px;color:#6b4800;vertical-align:top;line-height:1.65;font-size:12.5px">
-          <p style="margin:0 0 6px">BATiC score is calculated by summing the points for each parameter.</p>
-          <p style="margin:0 0 6px"><b style="font-weight:500">Score ≤ 7</b> renders intra-abdominal injury unlikely in haemodynamically stable patients and CT may be avoided.</p>
-          <p style="margin:0">The score range is <b style="font-weight:500">0 to 18</b>.</p>
-        </td>
-      </tr>
-
-      <!-- PECARN -->
-      <tr style="background:#e3f0ff;border-bottom:2px solid #cce0ff">
-        <td style="padding:12px 14px;vertical-align:top;border-right:1px solid #cce0ff">
-          <div style="font-size:13px;font-weight:500;color:#0d3a7a;margin-bottom:4px">Pediatric Emergency Care Applied Research Network (PECARN) prediction rule of 7</div>
-          <div style="font-size:11px;color:#2e7de0">[Ref 27] Holmes et al. 2013</div>
-        </td>
-        <td style="padding:12px 14px;color:#0d3a7a;vertical-align:top;border-right:1px solid #cce0ff">
-          <ul style="padding-left:1.1rem;margin:0;line-height:1.7">
-            <li>No evidence of abdominal wall trauma or evidence of seat belt sign</li>
-            <li>Glasgow Coma Scale score greater than 13</li>
-            <li>No abdominal tenderness</li>
-            <li>No evidence of thoracic wall trauma</li>
-            <li>No complaints of abdominal pain</li>
-            <li>No decreased breath sounds</li>
-            <li>No vomiting</li>
-          </ul>
-        </td>
-        <td style="padding:12px 14px;color:#0d3a7a;vertical-align:top;line-height:1.65;font-size:12.5px">
-          This prediction rule of <b style="font-weight:500">seven history and clinical examination parameters</b> (without laboratory or ultrasound findings) identifies patients who are at very low risk for intra-abdominal injury.
-        </td>
-      </tr>
-
-      <!-- Pediatric Surgery Research Collaborative (Streck) -->
-      <tr style="background:#f3eeff;border-bottom:2px solid #ddd0ff">
-        <td style="padding:12px 14px;vertical-align:top;border-right:1px solid #ddd0ff">
-          <div style="font-size:13px;font-weight:500;color:#3a1580;margin-bottom:4px">Pediatric Surgery Research Collaborative</div>
-          <div style="font-size:11px;color:#7c4dca">[Ref 29] Streck et al. 2017</div>
-        </td>
-        <td style="padding:12px 14px;color:#3a1580;vertical-align:top;border-right:1px solid #ddd0ff">
-          <ul style="padding-left:1.1rem;margin:0;line-height:1.7">
-            <li>AST &gt; 200 U/L</li>
-            <li>Abnormal abdominal examination</li>
-            <li>Abnormal chest radiograph</li>
-            <li>Report of abdominal pain</li>
-            <li>Abnormal pancreatic enzymes</li>
-          </ul>
-        </td>
-        <td style="padding:12px 14px;color:#3a1580;vertical-align:top;line-height:1.65;font-size:12.5px">
-          The rule had a <b style="font-weight:500">negative predictive value of 99.4%</b> for intra-abdominal injury and <b style="font-weight:500">100.0%</b> for intra-abdominal injury requiring intervention in patients with none of the prediction rule variables present.
-        </td>
-      </tr>
-
-      <!-- Blunt pediatric abdominal trauma guideline (Gaffey) -->
-      <tr style="background:#e6f9ee">
-        <td style="padding:12px 14px;vertical-align:top;border-right:1px solid #c0ecd4">
-          <div style="font-size:13px;font-weight:500;color:#155c30;margin-bottom:4px">Blunt pediatric abdominal trauma guideline</div>
-          <div style="font-size:11px;color:#4caf7d">[Ref 30] Gaffey et al. 2021</div>
-        </td>
-        <td style="padding:12px 14px;color:#155c30;vertical-align:top;border-right:1px solid #c0ecd4;line-height:1.65;font-size:12.5px">
-          <p style="margin:0 0 8px"><b style="font-weight:500">Step 1:</b> Abnormal FAST → CT indicated.</p>
-          <p style="margin:0 0 8px"><b style="font-weight:500">Step 2 (if FAST normal):</b> If all of the following are met — AST &lt; 200, ALT &lt; 100, Hgb &gt; 8.5, and urine analysis 0–5 RBCs/HPF — observe for 12–24 h. Otherwise, CT is indicated.</p>
-          <p style="margin:0"><b style="font-weight:500">Step 3 (during observation):</b> If serial abdominal exams are normal with normal WBC, Hgb drop &lt; 1.5, and temperature &lt; 101°F → discharge without CT. Otherwise, CT is indicated.</p>
-        </td>
-        <td style="padding:12px 14px;color:#155c30;vertical-align:top;line-height:1.65;font-size:12.5px">
-          The application of an evidence-based clinical guideline <b style="font-weight:500">reduces the frequency of CT use</b> while precisely detecting serious injuries.
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
-  </div>
-
-  <!-- EFAST & Radiation boxes -->
-  <div class="algo-box algo-box-amber">
-    <div class="algo-title" style="color:#5a3800">🟡 Role of EFAST in children</div>
-    <p style="font-size:13px;color:#5a3800;line-height:1.6">EFAST has <b style="font-weight:500">poor sensitivity</b> in paediatric abdominal trauma. Most valuable in <b style="font-weight:500">haemodynamically unstable</b> children to identify bloody collections mandating urgent surgery. Never use a negative FAST to exclude injury in a child with clinical suspicion.</p>
-  </div>
-
-  <div class="algo-box algo-box-red">
-    <div class="algo-title" style="color:#7a0a0a">🔴 Radiation considerations (ALARA)</div>
-    <p style="font-size:13px;color:#7a0a0a;line-height:1.6">The EPI-CT cohort study confirmed a dose-dependent link between paediatric CT and brain cancer risk. Standard: single-phase venous CT. Arterial phase only for suspected vascular injury. Split-bolus technique when dual-phase is needed. Delayed phase only for urinary system — not routine.</p>
-  </div>
+<div class="scenario-nav">
+  <button class="scenario-btn active" onclick="showScenario('typical',this)">Typical / Progressive / Paediatric</button>
+  <button class="scenario-btn" onclick="showScenario('ris',this)">Radiologically Isolated (RIS)</button>
+  <button class="scenario-btn" onclick="showScenario('older',this)">Age ≥50 / Comorbidities</button>
+  <button class="scenario-btn" onclick="showScenario('biomarkers',this)">Advanced Biomarkers</button>
+  <button class="scenario-btn" onclick="showScenario('summary',this)">Criteria Summary</button>
 </div>
 
-<!-- LIVER -->
-<div id="liver" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Most commonly injured organ in paediatric abdominal trauma. Posterior right lobe most vulnerable. Grade VI avulsion eliminated in 2018 (nonsurvivable — V is highest).</p>
-  <div class="grade-grid" id="liver-grades"></div>
-  <div class="section-label" style="background:#e3f0ff;color:#0d3a7a">Specific CT findings</div>
-  <div class="pearl-box" style="background:#e6f9ee;border-color:#4caf7d;color:#155c30"><b>Periportal low attenuation</b> — dilated periportal lymphatics from fluid resuscitation. Not a direct injury sign.</div>
-  <div class="pearl-box" style="background:#fff8dc;border-color:#e6a817;color:#6b4800"><b>Sentinel clot</b> — high-density haematoma (&gt;60 HU) adjacent to liver indicates nearby parenchymal injury.</div>
-  <div class="pearl-box" style="background:#fff0e0;border-color:#e07020;color:#7a3200"><b>Biliary injury</b> — rare (0.9–3.7%). Suspect if laceration extends to porta hepatis + contracted gallbladder. MRI/MRCP for biloma detection (delayed up to 60 days).</div>
-  <div class="pearl-box" style="background:#fde8e8;border-color:#d03030;color:#7a0a0a"><b>Bare area injury</b> — causes retroperitoneal haematoma (not peritoneal). Easy to miss.</div>
-</div>
+<div class="content">
 
-<!-- SPLEEN -->
-<div id="spleen" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Non-operative management succeeds in the vast majority of stable children. Surgical rate &lt;6% vs ~20% in adults. Angioembolisation rarely used in paediatric splenic trauma.</p>
-  <div class="grade-grid" id="spleen-grades"></div>
-  <div class="section-label" style="background:#e3f0ff;color:#0d3a7a">Specific CT findings</div>
-  <div class="pearl-box" style="background:#e6f9ee;border-color:#4caf7d;color:#155c30"><b>Splenic cleft vs laceration</b> — Clefts: smooth, linear, may contain fat. Lacerations: irregular outline, surrounded by haematoma.</div>
-  <div class="pearl-box" style="background:#fff8dc;border-color:#e6a817;color:#6b4800"><b>Splenic shattering</b> — complete fragmentation = grade V. Haemoperitoneum if capsule torn. Blood tracks along splenorenal ligament if hilum injured.</div>
-  <div class="pearl-box" style="background:#f3eeff;border-color:#7c4dca;color:#3a1580"><b>Multiple low-grade injuries</b> — two or more grade I/II injuries in the same organ upgrade to grade III (2018 rule).</div>
-</div>
+<!-- SCENARIO 1: TYPICAL + PAEDIATRIC -->
+<div class="scenario-panel active" id="panel-typical">
+  <div class="panel-title"><i class="ti ti-stethoscope" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>Typical Relapsing / Progressive / Paediatric Presentation</div>
+  <div class="panel-desc">For patients presenting with a clinical attack typical of MS, objective neurological progression ≥12 months, or paediatric-onset demyelination (&lt;18 years)</div>
 
-<!-- KIDNEY -->
-<div id="kidney" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Third most commonly injured organ. The 2018 update added segmental vascular injury and renal infarction. Delayed phase essential if injury ≥ grade II.</p>
-  <div class="grade-grid" id="kidney-grades"></div>
-  <div class="section-label" style="background:#e3f0ff;color:#0d3a7a">Special considerations</div>
-  <div class="pearl-box" style="background:#e6f9ee;border-color:#4caf7d;color:#155c30"><b>Delayed phase</b> — if renal laceration ≥ grade II, macroscopic haematuria, pelvic fracture, or perinephric fluid.</div>
-  <div class="pearl-box" style="background:#fde8e8;border-color:#d03030;color:#7a0a0a"><b>Main renal artery injury (grade V)</b> — prompt intervention required. CT shows absent parenchymal enhancement with patent proximal artery stump.</div>
-  <div class="pearl-box" style="background:#fff8dc;border-color:#e6a817;color:#6b4800"><b>Gonadal vein pitfall</b> — may mimic ureter. Follow anatomical course; confirm with delayed phase.</div>
-  <div class="pearl-box" style="background:#f3eeff;border-color:#7c4dca;color:#3a1580"><b>Bilateral injury upgrade</b> — both kidneys injured at grade I–II → upgrade overall grade by one (max III) per AAST-OIS 2018.</div>
-</div>
+  <!-- AGE GROUP -->
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">1</div><div class="step-title">Patient Age Group</div></div>
+    <select class="age-select" id="age-group" onchange="handleAgeChange()">
+      <option value="adult">Adult (≥18 years)</option>
+      <option value="ped12to17">Adolescent (12–17 years)</option>
+      <option value="pedlt12">Child (&lt;12 years)</option>
+    </select>
 
-<!-- PANCREAS -->
-<div id="pancreas" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Occurs in ~3–12% of blunt paediatric abdominal trauma. Often from handlebar/seatbelt injury compressing pancreas against spine. Early CT may be normal — serum lipase and MRI/MRCP are key adjuncts.</p>
-  <div class="grade-grid" id="pancreas-grades"></div>
-  <div class="section-label" style="background:#fff8dc;color:#6b4800">CT imaging pitfalls</div>
-  <div class="pearl-box" style="background:#e6f9ee;border-color:#4caf7d;color:#155c30"><b>Early CT may be normal</b> — oedema and peripancreatic fluid may not appear for 6–12 hours. Repeat CT or MRI/MRCP if clinical suspicion persists.</div>
-  <div class="pearl-box" style="background:#e3f0ff;border-color:#2e7de0;color:#0d3a7a"><b>Transection vs contusion</b> — look for linear hypoattenuating band across pancreatic neck/body. Peripancreatic fat stranding is an early sensitive sign.</div>
-  <div class="pearl-box" style="background:#fff8dc;border-color:#e6a817;color:#6b4800"><b>Main pancreatic duct injury</b> — determines grade (≥III). CT unreliable for duct assessment; MRCP or ERCP needed. Duct disruption → pseudocyst/fistula risk.</div>
-  <div class="pearl-box" style="background:#fff0e0;border-color:#e07020;color:#7a3200"><b>Handlebar / seatbelt mechanism</b> — high suspicion with epigastric wall bruising. Check lipase at 3–6 h post-injury.</div>
-  <div class="pearl-box" style="background:#fde8e8;border-color:#d03030;color:#7a0a0a"><b>Associated injuries</b> — pancreatic body injuries commonly associated with duodenal injuries (D2–D3 junction).</div>
-</div>
-
-<!-- BLADDER -->
-<div id="bladder" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Occurs in 3–10% of blunt pelvic trauma. CT cystogram required — passive IV contrast filling has poor sensitivity. Two parallel classification systems are used: the <b style="font-weight:500">AAST Urinary Bladder Injury Scale</b> (surgical/endoscopic basis) and the <b style="font-weight:500">Radiologic Classification System</b> by Sandler et al. (imaging basis). Each grade card shows both systems side by side.</p>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-    <div style="background:#e3f0ff;border-radius:8px;padding:8px 12px;font-size:12px;color:#0d3a7a"><b style="font-weight:500">AAST grades (I–V)</b> — based on surgical/endoscopic findings; size of laceration and anatomical extent determine grade.</div>
-    <div style="background:#e6f9ee;border-radius:8px;padding:8px 12px;font-size:12px;color:#155c30"><b style="font-weight:500">Radiologic grades (1–5)</b> — based on CT cystogram findings; preferred for imaging-based classification (Sandler et al.).</div>
-  </div>
-  <div class="grade-grid" id="bladder-grades"></div>
-  <div class="section-label" style="background:#e3f0ff;color:#0d3a7a">CT cystogram technique</div>
-  <div class="pearl-box" style="background:#e6f9ee;border-color:#4caf7d;color:#155c30"><b>Indications</b> — macroscopic haematuria, pelvic ring fracture, perivesical fluid, or renal laceration ≥ grade II.</div>
-  <div class="pearl-box" style="background:#e3f0ff;border-color:#2e7de0;color:#0d3a7a"><b>Technique</b> — retrograde diluted contrast via urethral catheter; adequate bladder distension required. CT with full bladder + post-drainage views.</div>
-  <div class="pearl-box" style="background:#fff8dc;border-color:#e6a817;color:#6b4800"><b>Extraperitoneal rupture (Radiologic 4a/4b)</b> — 4a: contrast confined to intrapelvic extraperitoneal space. 4b: contrast tracks into anterior abdominal wall, scrotum, penis, or perineum. Associated with pelvic ring fractures. Management: catheter drainage ± surgical repair.</div>
-  <div class="pearl-box" style="background:#fff0e0;border-color:#e07020;color:#7a3200"><b>Intraperitoneal rupture (Radiologic 2)</b> — contrast outlines bowel loops and peritoneal recesses. Mechanism: distended bladder + lap belt. Management: surgical repair.</div>
-  <div class="pearl-box" style="background:#fde8e8;border-color:#d03030;color:#7a0a0a"><b>Bladder neck / trigone injury (AAST Grade V)</b> — laceration extending into bladder neck or trigone. Always requires surgical repair. Assess for associated urethral injury.</div>
-</div>
-
-<!-- GRADE CALCULATOR -->
-<div id="calc" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1.2rem;line-height:1.6">Select CT findings for each organ to determine the AAST-OIS 2018 grade. The final grade is the highest-ranking criterion. Multiple grade I–II injuries in the same organ are upgraded by one grade (max III).</p>
-  <div class="calc-wrap" id="calc-panels"></div>
-</div>
-
-<!-- ASU+ -->
-<div id="asu" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">The <b style="font-weight:500">ASU+</b> algorithm provides a systematic stepwise approach to reading paediatric abdominal trauma CT.</p>
-  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.2rem">
-    <div class="asu-wrap"><div class="asu-letter" style="background:#e6a817;color:#fff;font-size:28px">A</div><div class="asu-content" style="background:#fff8dc"><h3 style="color:#5a3800">Air &amp; Active haemorrhage</h3><p style="color:#5a3800"><b style="font-weight:500">Lung window:</b> pneumoperitoneum, pneumothorax (free air anterior to liver). <b style="font-weight:500">Soft tissue window:</b> active bleeding — hyperattenuating blush isodense to arteries, persists on delayed. Sentinel clot (&gt;60 HU).</p></div></div>
-    <div class="asu-wrap"><div class="asu-letter" style="background:#4caf7d;color:#fff;font-size:28px">S</div><div class="asu-content" style="background:#e6f9ee"><h3 style="color:#155c30">Solid organ injury</h3><p style="color:#155c30">Assess liver, spleen, pancreas. <b style="font-weight:500">Liver window</b> for hepatic parenchyma. Grade using AAST-OIS 2018. Distinguish pseudoaneurysm (washout on delayed) from active bleeding (persistent) from AVF (early venous opacification).</p></div></div>
-    <div class="asu-wrap"><div class="asu-letter" style="background:#2e7de0;color:#fff;font-size:28px">U</div><div class="asu-content" style="background:#e3f0ff"><h3 style="color:#0d3a7a">Urological injury</h3><p style="color:#0d3a7a">Kidneys, ureters, bladder, adrenals, retroperitoneum, aorta, IVC. Delayed phase if renal laceration ≥ grade II, haematuria, or perinephric fluid. CT cystogram if bladder injury suspected.</p></div></div>
-    <div class="asu-wrap"><div class="asu-letter" style="background:#7c4dca;color:#fff;font-size:28px">+</div><div class="asu-content" style="background:#f3eeff"><h3 style="color:#3a1580">Plus — bowel, peritoneum, bones, hypoperfusion complex</h3><p style="color:#3a1580">Bowel wall thickening, mesenteric stranding, free fluid. <b style="font-weight:500">Bone window:</b> ribs, vertebrae, pelvis. Hypoperfusion complex: small aorta/IVC, diffuse bowel/mesentery/adrenal enhancement, periportal hypoattenuation.</p></div></div>
-  </div>
-  <div class="section-label" style="background:#e3f0ff;color:#0d3a7a">Window settings</div>
-  <div class="grade-grid">
-    <div class="win-card" style="background:#f0f0f0;border:2px solid #888"><div class="grade-label" style="background:#555;color:#fff">Lung window</div><div class="grade-title" style="color:#333">Pneumoperitoneum &amp; PTX</div><p style="font-size:12.5px;color:#444">Free air anterior to liver. Check pleural recesses.</p></div>
-    <div class="win-card" style="background:#e6f9ee;border:2px solid #4caf7d"><div class="grade-label" style="background:#4caf7d;color:#fff">Liver window</div><div class="grade-title" style="color:#155c30">Hepatic parenchyma</div><p style="font-size:12.5px;color:#1d6b38">Contusions, lacerations, periportal hypoattenuation.</p></div>
-    <div class="win-card" style="background:#e3f0ff;border:2px solid #2e7de0"><div class="grade-label" style="background:#2e7de0;color:#fff">Soft tissue window</div><div class="grade-title" style="color:#0d3a7a">Active bleeding &amp; solid organs</div><p style="font-size:12.5px;color:#1a4a90">Haemorrhage, lacerations, haematomas, peritoneal fluid.</p></div>
-    <div class="win-card" style="background:#fde8e8;border:2px solid #d03030"><div class="grade-label" style="background:#d03030;color:#fff">Bone window</div><div class="grade-title" style="color:#7a0a0a">Skeletal injuries</div><p style="font-size:12.5px;color:#8a0e0e">Ribs, vertebrae, pelvis, femur. Rib fractures may mimic organ contusion.</p></div>
-  </div>
-</div>
-
-<!-- LEXICON -->
-<div id="lexicon" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Standardised terminology improves accuracy of diagnosis, grading, and interdisciplinary communication.</p>
-  <div class="lex-grid">
-    <div class="lex-item" style="background:#e6f9ee;border:2px solid #4caf7d"><div class="lex-term" style="color:#155c30">Laceration</div><div class="lex-def" style="color:#1d6b38">Linear or branching hypoattenuating cleft through solid organ parenchyma. Depth and length determine grade.</div></div>
-    <div class="lex-item" style="background:#e3f0ff;border:2px solid #2e7de0"><div class="lex-term" style="color:#0d3a7a">Subcapsular haematoma</div><div class="lex-def" style="color:#1a4a90">Crescentic hypoattenuating collection beneath organ capsule, causing mass effect. Sized by % surface area.</div></div>
-    <div class="lex-item" style="background:#f3eeff;border:2px solid #7c4dca"><div class="lex-term" style="color:#3a1580">Intraparenchymal haematoma</div><div class="lex-def" style="color:#3a1580">Rounded hypoattenuating collection within parenchyma. Size measured in diameter. More discrete than contusion.</div></div>
-    <div class="lex-item" style="background:#fff8dc;border:2px solid #e6a817"><div class="lex-term" style="color:#6b4800">Contusion</div><div class="lex-def" style="color:#7a5200">Ill-defined parenchymal hypoattenuation without discrete laceration or haematoma. May become isoattenuating on delayed.</div></div>
-    <div class="lex-item" style="background:#fde8e8;border:2px solid #d03030"><div class="lex-term" style="color:#7a0a0a">Active haemorrhage</div><div class="lex-def" style="color:#8a0e0e">Hyperattenuating blush (isodense to arteries) that persists or increases on delayed images. Does not follow blood pool.</div></div>
-    <div class="lex-item" style="background:#fff0e0;border:2px solid #e07020"><div class="lex-term" style="color:#7a3200">Pseudoaneurysm</div><div class="lex-def" style="color:#8a3800">Contained vascular injury — well-defined contrast blush that washes out on delayed images (unlike active bleeding).</div></div>
-    <div class="lex-item" style="background:#e6f9ee;border:2px solid #4caf7d"><div class="lex-term" style="color:#155c30">Arteriovenous fistula</div><div class="lex-def" style="color:#1d6b38">Abnormal artery–vein communication — premature venous opacification simultaneously with arterial phase.</div></div>
-    <div class="lex-item" style="background:#e3f0ff;border:2px solid #2e7de0"><div class="lex-term" style="color:#0d3a7a">Sentinel clot</div><div class="lex-def" style="color:#1a4a90">High-density haematoma (&gt;60 HU) indicating injury to an adjacent solid organ. Location localises bleeding source.</div></div>
-    <div class="lex-item" style="background:#f3eeff;border:2px solid #7c4dca"><div class="lex-term" style="color:#3a1580">Organ fracture</div><div class="lex-def" style="color:#3a1580">Laceration extending from one capsular surface to the opposite, dividing the organ. ≥ grade III for spleen and kidney.</div></div>
-    <div class="lex-item" style="background:#fff8dc;border:2px solid #e6a817"><div class="lex-term" style="color:#6b4800">Devascularisation</div><div class="lex-def" style="color:#7a5200">Non-enhancement of a segment or entire organ. Wedge-shaped = segmental infarct. Total = grade V injury.</div></div>
-    <div class="lex-item" style="background:#fff0e0;border:2px solid #e07020"><div class="lex-term" style="color:#7a3200">Peritoneal fluid</div><div class="lex-def" style="color:#8a3800">Free fluid in hepatorenal space, paracolic gutters, or pelvis. &gt;30–40 HU = haemoperitoneum. Check all three locations.</div></div>
-    <div class="lex-item" style="background:#fde8e8;border:2px solid #d03030"><div class="lex-term" style="color:#7a0a0a">Hypoperfusion complex</div><div class="lex-def" style="color:#8a0e0e">Signs of hypovolaemic shock: collapsed IVC/aorta, intense bowel/adrenal enhancement, periportal hypoattenuation.</div></div>
-  </div>
-</div>
-
-<!-- REPORT TEMPLATE -->
-<div id="report" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Fill in the fields below to generate a structured CT report per AAST-OIS 2018 standards.</p>
-  <div class="report-box">
-    <div class="report-head" style="background:linear-gradient(135deg,#1a56a0,#2e7de0)">Patient &amp; clinical details</div>
-    <div class="report-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <div class="report-field"><label>Age</label><input type="text" id="r-age" placeholder="e.g. 8 years"></div>
-        <div class="report-field"><label>Sex</label><select id="r-sex"><option value="">—</option><option>Male</option><option>Female</option></select></div>
-        <div class="report-field"><label>Mechanism</label><select id="r-mech"><option value="">—</option><option>Road traffic accident</option><option>Fall from height</option><option>Handlebar injury</option><option>Seatbelt injury</option><option>Sports injury</option><option>Non-accidental injury</option><option>Other blunt trauma</option></select></div>
-      </div>
-      <div class="report-field"><label>Clinical presentation</label><textarea id="r-pres" placeholder="e.g. abdominal pain, haematuria, haemodynamically stable"></textarea></div>
-      <div class="report-field"><label>CT technique</label><select id="r-tech">
-        <option>Single-phase portal venous phase, IV contrast enhanced</option>
-        <option>Split-bolus technique (2/3 + 1/3 bolus), single acquisition</option>
-        <option>Dual phase (arterial + venous), IV contrast enhanced</option>
-        <option>Venous phase + delayed phase (urological protocol)</option>
-        <option>Triple-phase (arterial + venous + delayed)</option>
-      </select></div>
-    </div>
-  </div>
-  <div class="report-box">
-    <div class="report-head" style="background:linear-gradient(135deg,#0e8a6e,#4caf7d)">Organ injury findings</div>
-    <div class="report-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="report-field"><label>Liver grade</label><select id="r-liver"><option value="">Normal / not injured</option><option value="I">Grade I</option><option value="II">Grade II</option><option value="III">Grade III</option><option value="IV">Grade IV</option><option value="V">Grade V</option></select></div>
-        <div class="report-field"><label>Liver description</label><input type="text" id="r-liver-d" placeholder="e.g. subcapsular haematoma right lobe"></div>
-        <div class="report-field"><label>Spleen grade</label><select id="r-spleen"><option value="">Normal / not injured</option><option value="I">Grade I</option><option value="II">Grade II</option><option value="III">Grade III</option><option value="IV">Grade IV</option><option value="V">Grade V</option></select></div>
-        <div class="report-field"><label>Spleen description</label><input type="text" id="r-spleen-d" placeholder="e.g. intraparenchymal haematoma 4 cm"></div>
-        <div class="report-field"><label>Right kidney grade</label><select id="r-rk"><option value="">Normal / not injured</option><option value="I">Grade I</option><option value="II">Grade II</option><option value="III">Grade III</option><option value="IV">Grade IV</option><option value="V">Grade V</option></select></div>
-        <div class="report-field"><label>Right kidney description</label><input type="text" id="r-rk-d" placeholder="e.g. laceration 1.5 cm depth, perinephric haematoma"></div>
-        <div class="report-field"><label>Left kidney grade</label><select id="r-lk"><option value="">Normal / not injured</option><option value="I">Grade I</option><option value="II">Grade II</option><option value="III">Grade III</option><option value="IV">Grade IV</option><option value="V">Grade V</option></select></div>
-        <div class="report-field"><label>Left kidney description</label><input type="text" id="r-lk-d" placeholder="e.g. normal enhancement, no laceration"></div>
-        <div class="report-field"><label>Pancreas grade</label><select id="r-panc"><option value="">Normal / not injured</option><option value="I">Grade I</option><option value="II">Grade II</option><option value="III">Grade III</option><option value="IV">Grade IV</option><option value="V">Grade V</option></select></div>
-        <div class="report-field"><label>Pancreas description</label><input type="text" id="r-panc-d" placeholder="e.g. peripancreatic fat stranding"></div>
-        <div class="report-field"><label>Bladder</label><select id="r-blad"><option value="">Normal / not injured</option><option value="I">Grade I</option><option value="II">Grade II</option><option value="III">Grade III</option><option value="IV">Grade IV</option><option value="V">Grade V</option></select></div>
-        <div class="report-field"><label>Bladder description</label><input type="text" id="r-blad-d" placeholder="e.g. extraperitoneal contrast extravasation"></div>
+    <!-- Paediatric-specific section -->
+    <div class="ped-section" id="ped-section">
+      <div class="ped-section-title"><i class="ti ti-alert-circle" style="font-size:15px"></i>Paediatric-Specific Checks</div>
+      <div class="info-box amber" style="margin-bottom:10px">Same unified diagnostic framework as adults applies — with the additional considerations below.</div>
+      <div class="check-group">
+        <div class="check-item" id="adem-chk" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-label"><strong>ADEM presentation?</strong> — If yes, a second typical MS attack or new T2 lesions in MS locations <strong>&gt;90 days post-ADEM onset</strong> is required before applying MS criteria.</div>
+        </div>
+        <div class="check-item" id="mog-chk" onclick="toggleCheck(this)">
+          <div class="check-box"></div>
+          <div class="check-label" id="mog-label"><strong>MOG-IgG tested (cell-based assay) and negative?</strong> — <span id="mog-rec">Strongly recommended in all children &lt;12 yrs with incident CNS demyelination.</span></div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="report-box">
-    <div class="report-head" style="background:linear-gradient(135deg,#7c4dca,#a070e0)">Additional findings</div>
-    <div class="report-body">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="report-field"><label>Vascular injury</label><select id="r-vasc"><option value="">None identified</option><option>Pseudoaneurysm</option><option>Arteriovenous fistula</option><option>Active haemorrhage — contained</option><option>Active haemorrhage — intraperitoneal</option><option>Active haemorrhage — retroperitoneal</option></select></div>
-        <div class="report-field"><label>Free fluid</label><select id="r-fluid"><option value="">None</option><option>Trace haemoperitoneum</option><option>Moderate haemoperitoneum</option><option>Large haemoperitoneum</option><option>Simple free fluid (low density)</option></select></div>
-        <div class="report-field"><label>Bowel / mesentery</label><select id="r-bowel"><option value="">Normal</option><option>Mesenteric stranding</option><option>Bowel wall thickening</option><option>Pneumoperitoneum</option><option>Extraluminal contrast</option></select></div>
-        <div class="report-field"><label>Skeletal injury</label><input type="text" id="r-bone" placeholder="e.g. right 10th rib fracture"></div>
-        <div class="report-field"><label>Hypoperfusion complex</label><select id="r-hypo"><option value="">Absent</option><option>Present</option></select></div>
-        <div class="report-field"><label>Adrenal injury</label><select id="r-adren"><option value="">None</option><option>Right adrenal haematoma</option><option>Left adrenal haematoma</option><option>Bilateral adrenal haematoma</option></select></div>
+
+  <!-- CNS LOCATIONS -->
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">2</div><div class="step-title">Clinical Course & CNS Anatomical Locations</div></div>
+
+    <div style="margin-bottom:12px">
+      <div class="check-item" id="progressive-chk" onclick="toggleCheck(this);handleProgressiveChange()">
+        <div class="check-box"></div>
+        <div class="check-label"><strong>Progressive disease ≥12 months?</strong> — If yes, ≥2 spinal cord lesions alone fulfil DIS (count as 2 CNS locations), without needing other regions</div>
       </div>
-      <div class="report-field"><label>Additional comments</label><textarea id="r-extra" placeholder="Any other relevant findings..."></textarea></div>
+    </div>
+
+    <div class="info-box" id="dis-info-box">Select all regions showing lesions typical of MS (symptomatic or asymptomatic). Minimum 2 required for DIS.</div>
+
+    <div class="criteria-grid">
+      <div class="criteria-item" data-group="loc-typ" onclick="toggleItem(this,'loc-typ','loc-count-typ')"><div class="ci-title">Periventricular</div><div class="ci-desc">≥1 typical T2 lesion</div></div>
+      <div class="criteria-item" data-group="loc-typ" onclick="toggleItem(this,'loc-typ','loc-count-typ')"><div class="ci-title">Cortical / Juxtacortical</div><div class="ci-desc">≥1 lesion</div></div>
+      <div class="criteria-item" data-group="loc-typ" onclick="toggleItem(this,'loc-typ','loc-count-typ')"><div class="ci-title">Infratentorial</div><div class="ci-desc">Brainstem / cerebellar</div></div>
+      <div class="criteria-item" data-group="loc-typ" onclick="toggleItem(this,'loc-typ','loc-count-typ')">
+        <div class="ci-title">Spinal Cord</div>
+        <div class="ci-desc" id="sc-desc">≥1 cord lesion</div>
+      </div>
+      <div class="criteria-item" data-group="loc-typ" onclick="toggleItem(this,'loc-typ','loc-count-typ')">
+        <div class="ci-title">Optic Nerve <span style="font-size:10px;background:#c5cae9;color:#3949ab;padding:1px 5px;border-radius:8px">NEW 2024</span></div>
+        <div class="ci-desc">OCT / VEP / MRI</div>
+      </div>
+    </div>
+
+    <!-- Progressive spinal cord sub-option -->
+    <div id="sc-progressive-box" style="display:none;margin-top:10px">
+      <div class="info-box amber">Progressive disease ≥12 months: ≥2 spinal cord lesions fulfil DIS on their own — select spinal cord above and confirm below.</div>
+      <div class="check-item" id="sc2-chk" onclick="toggleCheck(this)" style="margin-top:8px">
+        <div class="check-box"></div>
+        <div class="check-label"><strong>≥2 spinal cord lesions confirmed</strong> — This alone satisfies DIS criteria for progressive MS (counts as 2 CNS locations)</div>
+      </div>
+    </div>
+
+    <div style="font-size:13px;color:#3949ab;font-weight:600;margin-top:10px">Locations selected: <span class="location-count" id="loc-count-typ">0</span></div>
+  </div>
+
+  <!-- ADDITIONAL EVIDENCE -->
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">3</div><div class="step-title">Additional Diagnostic Evidence</div></div>
+    <div class="check-group" id="additional-typ">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>DIT on MRI</strong> — New T2 lesion, Gd-enhancing lesion, or new clinical attack</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>Positive CSF</strong> — Oligoclonal bands OR kappa free-light chain index (kFLC)</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label" id="cvs-label"><strong>Central Vein Sign (CVS)</strong> — <span id="cvs-rule">Select 6 method positive (≥6 CVS-positive lesions; majority if &lt;10 lesions)</span></div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>Paramagnetic Rim Lesions (PRL)</strong> — ≥1 PRL on susceptibility-weighted MRI</div></div>
     </div>
   </div>
-  <div style="margin-bottom:1rem">
-    <button class="btn-primary" onclick="genReport()">Generate report</button>
-    <button class="btn-sec" id="copy-btn" onclick="copyReport()">Copy</button>
-    <button class="btn-sec" onclick="clearReport()">Clear</button>
+
+  <button class="btn-evaluate" onclick="evaluateTypical()"><i class="ti ti-brain" style="font-size:15px;vertical-align:-2px;margin-right:6px"></i>Evaluate Diagnosis</button>
+  <button class="btn-reset" onclick="resetTypical()"><i class="ti ti-refresh" style="font-size:14px;vertical-align:-2px;margin-right:4px"></i>Reset</button>
+  <div class="result-box" id="result-typical"></div>
+</div>
+
+<!-- SCENARIO 2: RIS -->
+<div class="scenario-panel" id="panel-ris">
+  <div class="panel-title"><i class="ti ti-scan" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>Radiologically Isolated Syndrome (RIS)</div>
+  <div class="panel-desc">Incidental CNS T2-hyperintense lesions typical of MS without clinical symptoms of inflammatory demyelination</div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">1</div><div class="step-title">CNS Regions Involved</div></div>
+    <div class="info-box">RIS requires lesions in ≥2 anatomical locations to proceed to diagnosis.</div>
+    <div class="criteria-grid">
+      <div class="criteria-item" data-group="loc-ris" onclick="toggleItem(this,'loc-ris','loc-count-ris')"><div class="ci-title">Periventricular</div></div>
+      <div class="criteria-item" data-group="loc-ris" onclick="toggleItem(this,'loc-ris','loc-count-ris')"><div class="ci-title">Cortical / Juxtacortical</div></div>
+      <div class="criteria-item" data-group="loc-ris" onclick="toggleItem(this,'loc-ris','loc-count-ris')"><div class="ci-title">Infratentorial</div></div>
+      <div class="criteria-item" data-group="loc-ris" onclick="toggleItem(this,'loc-ris','loc-count-ris')"><div class="ci-title">Spinal Cord</div></div>
+      <div class="criteria-item" data-group="loc-ris" onclick="toggleItem(this,'loc-ris','loc-count-ris')"><div class="ci-title">Optic Nerve <span style="font-size:10px;background:#c5cae9;color:#3949ab;padding:1px 5px;border-radius:8px">NEW</span></div></div>
+    </div>
+    <div style="font-size:13px;color:#3949ab;font-weight:600">Locations: <span class="location-count" id="loc-count-ris">0</span></div>
   </div>
-  <div class="report-box">
-    <div class="report-head" style="background:linear-gradient(135deg,#e07020,#e6a817)">Generated report</div>
-    <div class="report-body"><div class="report-out" id="report-out">Fill in the fields above and click "Generate report".</div></div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">2</div><div class="step-title">At Least One Additional Feature Required</div></div>
+    <div class="check-group" id="additional-ris">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>DIT on MRI</strong> — New T2 or Gd+ lesion on follow-up</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>Positive CSF</strong> — Oligoclonal bands or positive kFLC index</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>CVS Select 6 Positive</strong> — ≥6 lesions with central vein sign</div></div>
+    </div>
+  </div>
+
+  <button class="btn-evaluate" onclick="evaluateRIS()">Evaluate RIS Diagnosis</button>
+  <button class="btn-reset" onclick="resetPanel('ris')">Reset</button>
+  <div class="result-box" id="result-ris"></div>
+</div>
+
+<!-- SCENARIO 3: OLDER -->
+<div class="scenario-panel" id="panel-older">
+  <div class="panel-title"><i class="ti ti-heart-rate-monitor" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>Age ≥50 or Significant Vascular Comorbidities</div>
+  <div class="panel-desc">Higher risk of misdiagnosis — additional confirmatory tests are strongly recommended</div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">1</div><div class="step-title">Vascular Risk Factors Present?</div></div>
+    <div class="criteria-grid">
+      <div class="criteria-item" data-group="vrf" onclick="toggleItem(this,'vrf','')"><div class="ci-title">Hypertension</div></div>
+      <div class="criteria-item" data-group="vrf" onclick="toggleItem(this,'vrf','')"><div class="ci-title">Diabetes</div></div>
+      <div class="criteria-item" data-group="vrf" onclick="toggleItem(this,'vrf','')"><div class="ci-title">Smoking</div></div>
+      <div class="criteria-item" data-group="vrf" onclick="toggleItem(this,'vrf','')"><div class="ci-title">Hyperlipidaemia</div></div>
+      <div class="criteria-item" data-group="vrf" onclick="toggleItem(this,'vrf','')"><div class="ci-title">Macrovascular disease</div></div>
+      <div class="criteria-item" data-group="vrf" onclick="toggleItem(this,'vrf','')"><div class="ci-title">Migraine</div></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">2</div><div class="step-title">Standard Criteria Met?</div></div>
+    <div class="check-group">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>DIS fulfilled</strong> — ≥2 of 5 CNS locations</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>Typical attack or ≥12 months progression</strong> — If progressive ≥12 months: ≥2 spinal cord lesions alone fulfil DIS (counts as 2 CNS locations)</div></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">3</div><div class="step-title">Additional Confirmatory Tests (Strongly Recommended)</div></div>
+    <div class="info-box">At least ONE of the following is strongly recommended to confirm MS in this age/risk group</div>
+    <div class="check-group">
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>≥1 spinal cord lesion</strong></div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>Positive CSF</strong> — Oligoclonal bands or kFLC index</div></div>
+      <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><div class="check-label"><strong>CVS Select 6 positive</strong></div></div>
+    </div>
+  </div>
+
+  <button class="btn-evaluate" onclick="evaluateOlder()">Evaluate Diagnosis</button>
+  <button class="btn-reset" onclick="resetPanel('older')">Reset</button>
+  <div class="result-box" id="result-older"></div>
+</div>
+
+<!-- SCENARIO 4: BIOMARKERS -->
+<div class="scenario-panel" id="panel-biomarkers">
+  <div class="panel-title"><i class="ti ti-microscope" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>Advanced Biomarkers Guide (2024 Additions)</div>
+  <div class="panel-desc">Quick reference for novel biomarkers introduced or upgraded in 2024 McDonald criteria</div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">A</div><div class="step-title">Kappa Free-Light Chains (kFLC) — NEW Equivalence</div></div>
+    <table class="summary-table">
+      <tr><th>Feature</th><th>Detail</th></tr>
+      <tr><td>Status</td><td><span class="tag green">Equivalent to OCBs</span></td></tr>
+      <tr><td>Method</td><td>Nephelometry or turbidimetry (CSF + serum)</td></tr>
+      <tr><td>Threshold</td><td>kFLC index — most validated; concordance with OCBs ~87–90%</td></tr>
+      <tr><td>Advantage</td><td>Automated, rater-independent, available in more labs</td></tr>
+      <tr><td>Use</td><td>Substitute OCBs where unavailable; can confirm DIT substitute</td></tr>
+    </table>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">B</div><div class="step-title">Central Vein Sign (CVS)</div></div>
+    <table class="summary-table">
+      <tr><th>Feature</th><th>Detail</th></tr>
+      <tr><td>Method (adults)</td><td>Select 6 (≥6 CVS+ lesions; or majority if &lt;10 lesions)</td></tr>
+      <tr><td>Method (paediatric)</td><td>&gt;50% of T2 lesions show CVS</td></tr>
+      <tr><td>Sensitivity / Specificity</td><td>59–89% / 75–98% (select 6)</td></tr>
+      <tr><td>Best MRI</td><td>3T SWI or T2* EPI; detectable at 1.5T with optimised sequences</td></tr>
+      <tr><td>When to use</td><td>1 CNS region + DIT or CSF; or DIS confirmed → sufficient alone</td></tr>
+    </table>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">C</div><div class="step-title">Paramagnetic Rim Lesions (PRL)</div></div>
+    <table class="summary-table">
+      <tr><th>Feature</th><th>Detail</th></tr>
+      <tr><td>Pathology</td><td>Chronic active lesions — iron-laden activated microglia rim</td></tr>
+      <tr><td>Specificity</td><td>~98% (systematic review); rarely in mimics</td></tr>
+      <tr><td>Sensitivity</td><td>10–92% (variable)</td></tr>
+      <tr><td>Threshold</td><td>≥1 PRL sufficient</td></tr>
+      <tr><td>When to use</td><td>1 CNS region + DIT or CSF → MS diagnosis supported</td></tr>
+      <tr><td>Older patients</td><td>No consensus reached — use with caution</td></tr>
+    </table>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header"><div class="step-num">D</div><div class="step-title">Optic Nerve as 5th Location</div></div>
+    <table class="summary-table">
+      <tr><th>Tool</th><th>Abnormal Threshold</th></tr>
+      <tr><td>OCT (peripapillary RNFL)</td><td>Inter-eye difference ≥6 µm (no better explanation)</td></tr>
+      <tr><td>OCT (macular GCIPL)</td><td>Inter-eye difference ≥4 µm</td></tr>
+      <tr><td>VEP (P100 latency)</td><td>≥2.5 SD above mean absolute AND inter-ocular latency</td></tr>
+      <tr><td>Optic nerve MRI</td><td>≥1 intrinsic T2-hyperintense lesion (fat-saturation sequence)</td></tr>
+    </table>
   </div>
 </div>
 
-<!-- PEARLS -->
-<div id="pearls" class="section">
-  <p style="font-size:13px;color:var(--color-text-secondary,#555);margin-bottom:1rem;line-height:1.6">Key differences in management and physiology between paediatric and adult solid organ trauma.</p>
-  <div class="compare-grid">
-    <div class="compare-card" style="background:linear-gradient(135deg,#e3f0ff,#cce3ff);border:2px solid #2e7de0">
-      <h4 style="color:#0d3a7a;border-color:rgba(46,125,224,.3)">🧒 Children</h4>
-      <ul style="color:#1a4a90">
-        <li>Management determined solely by <b style="font-weight:500">haemodynamic stability</b></li>
-        <li>Stable → non-operative regardless of CT grade</li>
-        <li>AAST grade guides hospital stay &amp; activity restriction</li>
-        <li>Surgical rate for spleen: <b style="font-weight:500">&lt;6%</b></li>
-        <li>Angioembolisation rarely used for splenic trauma</li>
-        <li>Single-phase (venous) CT standard</li>
-        <li>More radiosensitive — ALARA essential</li>
-      </ul>
-    </div>
-    <div class="compare-card" style="background:linear-gradient(135deg,#fff0e0,#fde0c0);border:2px solid #e07020">
-      <h4 style="color:#7a3200;border-color:rgba(224,112,32,.3)">🧑 Adults</h4>
-      <ul style="color:#8a3800">
-        <li>CT grade <b style="font-weight:500">directly influences</b> operative decision</li>
-        <li>Grade III–V → consider angioembolisation</li>
-        <li>Vascular injury → angioembolisation recommended</li>
-        <li>Surgical rate for spleen: <b style="font-weight:500">~20%</b></li>
-        <li>Angioembolisation standard for high-grade splenic injuries</li>
-        <li>Arterial phase often added</li>
-        <li>Grade VI hepatic avulsion was historically described</li>
-      </ul>
-    </div>
+<!-- SCENARIO 5: SUMMARY -->
+<div class="scenario-panel" id="panel-summary">
+  <div class="panel-title"><i class="ti ti-list-check" style="font-size:16px;vertical-align:-2px;margin-right:6px"></i>2024 vs 2017 McDonald Criteria — Key Changes</div>
+  <div class="panel-desc">Summary of all revisions published in Lancet Neurology 2025</div>
+
+  <div class="step-card">
+    <table class="summary-table">
+      <tr><th>Domain</th><th>2017 Criteria</th><th>2024 Revision</th></tr>
+      <tr><td>CNS locations</td><td>4 regions</td><td>5 regions (optic nerve added) <span class="tag green">NEW</span></td></tr>
+      <tr><td>DIT requirement</td><td>Mandatory (unless OCBs)</td><td>No longer mandatory in several situations <span class="tag green">NEW</span></td></tr>
+      <tr><td>kFLC</td><td>Not included</td><td>Interchangeable with OCBs <span class="tag green">NEW</span></td></tr>
+      <tr><td>CVS</td><td>Not included</td><td>Diagnostic in specific situations <span class="tag green">NEW</span></td></tr>
+      <tr><td>PRL</td><td>Not included</td><td>Diagnostic in specific situations <span class="tag green">NEW</span></td></tr>
+      <tr><td>RIS</td><td>Not included in criteria</td><td>Can be diagnosed as MS if criteria met <span class="tag green">NEW</span></td></tr>
+      <tr><td>Paediatric</td><td>Separate considerations</td><td>Unified framework (same criteria) + ADEM/MOG rules</td></tr>
+      <tr><td>Progressive MS</td><td>Separate criteria</td><td>Unified with relapsing MS <span class="tag green">NEW</span></td></tr>
+      <tr><td>Age ≥50</td><td>No specific guidance</td><td>Additional confirmatory tests strongly recommended <span class="tag green">NEW</span></td></tr>
+      <tr><td>DIS (spinal cord)</td><td>1 lesion for progressive</td><td>2 spinal cord lesions sufficient for DIS in progressive <span class="tag green">NEW</span></td></tr>
+    </table>
   </div>
-  <div class="section-label" style="background:#fde8e8;color:#7a0a0a">Why children are more vulnerable</div>
-  <div class="pearl-box" style="background:#e3f0ff;border-color:#2e7de0;color:#0d3a7a"><b>Anatomy:</b> Smaller abdominal cavity, thinner fat, relatively larger organs, weaker abdominal wall → less protection from blunt impact.</div>
-  <div class="pearl-box" style="background:#fde8e8;border-color:#d03030;color:#7a0a0a"><b>Radiation sensitivity:</b> More rapidly dividing cells, smaller body cross-section (higher organ dose), longer lifespan to manifest radiation effects.</div>
-  <div class="pearl-box" style="background:#f3eeff;border-color:#7c4dca;color:#3a1580"><b>Multiple low-grade injuries (2018 rule):</b> Two or more grade I/II injuries in the same organ upgrade to grade III.</div>
-  <div class="section-label" style="background:#e6f9ee;color:#155c30">CT protocol summary</div>
-  <div class="pearl-box" style="background:#e6f9ee;border-color:#4caf7d;color:#155c30"><b>Standard:</b> Single-phase portal venous, lower thorax to pubic symphysis.</div>
-  <div class="pearl-box" style="background:#e3f0ff;border-color:#2e7de0;color:#0d3a7a"><b>Split-bolus:</b> Combined arterial + venous in one acquisition (2/3 + 1/3 bolus).</div>
-  <div class="pearl-box" style="background:#fff8dc;border-color:#e6a817;color:#6b4800"><b>Arterial phase:</b> High-velocity/penetrating trauma or suspected arterial injury for endovascular planning only.</div>
-  <div class="pearl-box" style="background:#fff0e0;border-color:#e07020;color:#7a3200"><b>Delayed phase:</b> Suspected urinary tract injury or vascular blush on venous phase. Not routine.</div>
-</div>
 
-</div><!-- end padding wrap -->
-
-<!-- DISCLAIMER FOOTNOTE -->
-<div style="margin:2rem 1rem 0;padding:14px 18px;border-radius:10px;background:linear-gradient(135deg,#fff8e1,#fff3cd);border:1px solid #f0c040;display:flex;gap:12px;align-items:flex-start">
-  <span style="font-size:18px;line-height:1.3;flex-shrink:0">⚠️</span>
-  <div>
-    <div style="font-size:12.5px;font-weight:500;color:#7a4f00;margin-bottom:3px">Disclaimer</div>
-    <div style="font-size:12px;color:#7a4f00;line-height:1.6">This application is designed for educational purposes only. All clinical decisions must be confirmed by board-certified radiologists or trauma surgeons. Grading is based on <a href="https://link.springer.com/article/10.1007/s00247-025-06321-3" style="color:#1a56a0;font-weight:500" target="_blank">Mohammad et al., Pediatric Radiology 2025</a> and the AAST-OIS 2018 update.</div>
+  <div class="step-card">
+    <div class="step-header"><div class="step-num"><i class="ti ti-info-circle" style="font-size:14px"></i></div><div class="step-title">Core Diagnostic Principle</div></div>
+    <p style="font-size:13px;line-height:1.7;color:#3949ab">The 2024 criteria require: <strong>(1)</strong> Typical lesions in characteristic CNS locations; <strong>(2)</strong> No better explanation. A diagnosis of MS is always one of exclusion — NMOSD and MOGAD must be ruled out, especially with optic neuritis or longitudinally extensive myelitis.</p>
   </div>
 </div>
+
+</div><!-- end content -->
 
 <script>
-/* ---- Grade data ---- */
-const liverData=[
-  {g:'I',label:'Minor',c:'gc1',title:'Subcapsular haematoma &lt;10% SA; laceration &lt;1 cm depth',details:['Subcapsular haematoma &lt;10% of hepatic surface area','Parenchymal laceration &lt;1 cm depth','No significant haemorrhage']},
-  {g:'II',label:'Mild',c:'gc2',title:'Subcapsular haematoma 10–50% SA; laceration 1–3 cm depth, ≤10 cm length',details:['Subcapsular haematoma 10–50% surface area','Parenchymal haematoma &lt;10 cm diameter','Laceration 1–3 cm depth, ≤10 cm length']},
-  {g:'III',label:'Moderate',c:'gc3',title:'Subcapsular haematoma &gt;50% SA; ruptured haematoma; laceration &gt;3 cm; contained vascular injury',details:['Subcapsular haematoma &gt;50% surface area','Parenchymal haematoma &gt;10 cm or ruptured','Laceration &gt;3 cm depth','Pseudoaneurysm/AVF — active bleeding confined to parenchyma']},
-  {g:'IV',label:'Severe',c:'gc4',title:'25–75% lobar disruption; active bleeding into peritoneum',details:['Parenchymal disruption 25–75% of a hepatic lobe','Vascular injury with active bleeding extending beyond liver capsule into peritoneum']},
-  {g:'V',label:'Critical',c:'gc5',title:'&gt;75% lobar disruption; retrohepatic IVC or major hepatic vein injury',details:['Hepatic parenchyma disruption &gt;75% of a lobe','Injury to retrohepatic vena cava or major hepatic veins','(Grade VI avulsion eliminated — V is highest)']},
-];
-const spleenData=[
-  {g:'I',label:'Minor',c:'gc1',title:'Subcapsular haematoma &lt;10% SA; laceration &lt;1 cm depth',details:['Subcapsular haematoma &lt;10% surface area','Capsular laceration &lt;1 cm depth','Contusion']},
-  {g:'II',label:'Mild',c:'gc2',title:'Subcapsular haematoma 10–50% SA; intraparenchymal haematoma &lt;5 cm; laceration 1–3 cm',details:['Subcapsular haematoma 10–50% surface area','Intraparenchymal haematoma &lt;5 cm','Laceration 1–3 cm depth']},
-  {g:'III',label:'Moderate',c:'gc3',title:'Subcapsular haematoma &gt;50% SA; ruptured haematoma; intraparenchymal ≥5 cm; laceration &gt;3 cm',details:['Subcapsular haematoma &gt;50% surface area','Ruptured haematoma','Intraparenchymal haematoma ≥5 cm','Laceration &gt;3 cm depth']},
-  {g:'IV',label:'Severe',c:'gc4',title:'Segmental/hilar vessel injury causing &gt;25% devascularisation; pseudoaneurysm/AVF; contained active bleeding',details:['&gt;25% splenic devascularisation','Pseudoaneurysm or AVF','Active bleeding confined within splenic capsule']},
-  {g:'V',label:'Critical',c:'gc5',title:'Shattered spleen; active bleeding into peritoneum',details:['Completely shattered spleen','Hilar vascular injury causing total devascularisation','Active bleeding extending into peritoneum']},
-];
-const kidneyData=[
-  {g:'I',label:'Minor',c:'gc1',title:'Subcapsular haematoma (no laceration); parenchymal contusion',details:['Subcapsular haematoma without laceration','Parenchymal contusion']},
-  {g:'II',label:'Mild',c:'gc2',title:'Perinephric haematoma within Gerota fascia; laceration ≤1 cm depth',details:['Perinephric haematoma confined within Gerota fascia','Laceration ≤1 cm depth, no collecting system involvement']},
-  {g:'III',label:'Moderate',c:'gc3',title:'Laceration &gt;1 cm depth (no collecting system rupture); vascular injury within Gerota fascia',details:['Laceration &gt;1 cm without collecting system rupture','Vascular injury or active bleeding confined within Gerota fascia']},
-  {g:'IV',label:'Severe',c:'gc4',title:'Collecting system laceration with urinary extravasation; segmental vascular injury; segmental infarction',details:['Laceration extending into collecting system — urinary extravasation','Renal pelvis laceration / complete UPJ disruption','Segmental renal artery or vein injury','Active bleeding beyond Gerota fascia','Segmental renal infarction (vascular thrombosis)']},
-  {g:'V',label:'Critical',c:'gc5',title:'Shattered kidney; avulsed hilum; main renal artery/vein laceration; complete devascularisation',details:['Shattered kidney','Avulsion of renal hilum','Main renal artery or vein laceration','Active bleeding with complete renal devascularisation']},
-];
-const pancreasData=[
-  {g:'I',label:'Minor',c:'gc1',title:'Minor contusion or superficial laceration without duct injury',details:['Minor contusion without duct injury','Superficial laceration without duct involvement']},
-  {g:'II',label:'Mild',c:'gc2',title:'Major contusion or laceration without duct injury; no tissue loss',details:['Major contusion without duct injury','Laceration without duct involvement']},
-  {g:'III',label:'Moderate',c:'gc3',title:'Distal transection or parenchymal injury with duct injury',details:['Distal transection (distal to superior mesenteric vessels)','Parenchymal injury involving the pancreatic duct distally']},
-  {g:'IV',label:'Severe',c:'gc4',title:'Proximal transection or parenchymal injury involving the ampulla',details:['Proximal transection (right of superior mesenteric vessels)','Parenchymal injury involving the ampulla of Vater']},
-  {g:'V',label:'Critical',c:'gc5',title:'Massive disruption of the pancreatic head',details:['Massive disruption of the pancreatic head','Associated duodenal/bile duct injury common']},
-];
-const bladderData=[
-  {g:'I',label:'Minor',c:'gc1',
-   title:'AAST: Intramural haematoma; partial thickness tear — Radiologic: Bladder contusion',
-   details:[
-     '<b>AAST Grade I:</b> Intramural haematoma; laceration — partial thickness tear',
-     '<b>Radiologic Grade 1 — Urinary bladder contusion:</b> Usually normal CT appearance; when detectable, appears as mild focal wall thickening',
-   ]},
-  {g:'II',label:'Mild',c:'gc2',
-   title:'AAST: Extraperitoneal laceration &lt;2 cm — Radiologic: Intraperitoneal rupture',
-   details:[
-     '<b>AAST Grade II:</b> Extraperitoneal bladder wall laceration less than 2 cm',
-     '<b>Radiologic Grade 2 — Intraperitoneal rupture:</b> Contrast leaks into the peritoneal cavity, outlining bowel loops and peritoneal recesses',
-   ]},
-  {g:'III',label:'Moderate',c:'gc3',
-   title:'AAST: Extraperitoneal ≥2 cm or intraperitoneal &lt;2 cm — Radiologic: Interstitial injury',
-   details:[
-     '<b>AAST Grade III:</b> Extraperitoneal laceration ≥ 2 cm, or intraperitoneal laceration &lt; 2 cm',
-     '<b>Radiologic Grade 3 — Interstitial injury:</b> Wall irregularity related to intramural blood and contrast extension through a defect in the mucosa without transmural extension',
-   ]},
-  {g:'IV',label:'Severe',c:'gc4',
-   title:'AAST: Intraperitoneal laceration ≥2 cm — Radiologic: Extraperitoneal rupture (simple or complex)',
-   details:[
-     '<b>AAST Grade IV:</b> Intraperitoneal bladder wall laceration ≥ 2 cm',
-     '<b>Radiologic Grade 4 — Extraperitoneal rupture:</b>',
-     '4a Simple: Contrast leakage confined to the extraperitoneal, intrapelvic space',
-     '4b Complex: Contrast leakage into the anterior abdominal wall, penis, scrotum, and/or perineum',
-   ]},
-  {g:'V',label:'Critical',c:'gc5',
-   title:'AAST: Laceration extending into bladder neck or trigone — Radiologic: Combined rupture',
-   details:[
-     '<b>AAST Grade V:</b> Intraperitoneal or extraperitoneal bladder wall laceration extending into the bladder neck or trigone',
-     '<b>Radiologic Grade 5 — Combined intraperitoneal and extraperitoneal rupture:</b> Contrast extravasation into both the peritoneal cavity and extraperitoneal space simultaneously',
-   ]},
-];
-
-/* ---- Calculator data ---- */
-const calcData=[
-  {id:'c-liver',organ:'Liver',headStyle:'background:linear-gradient(135deg,#4caf7d,#1a8a50)',
-   questions:[
-     {q:'Subcapsular haematoma size',opts:['None','< 10% SA (→ I)','10–50% SA (→ II)','> 50% SA or ruptured (→ III)']},
-     {q:'Parenchymal laceration depth',opts:['None','< 1 cm (→ I)','1–3 cm, ≤10 cm length (→ II)','> 3 cm (→ III)']},
-     {q:'Parenchymal haematoma',opts:['None','< 10 cm diameter (→ II)','> 10 cm or ruptured (→ III)']},
-     {q:'Vascular / parenchymal disruption',opts:['None','Pseudoaneurysm or AVF, contained (→ III)','Active bleed into peritoneum OR 25–75% lobar disruption (→ IV)','> 75% lobar disruption or retrohepatic IVC injury (→ V)']},
-     {q:'Multiple grade I–II injuries in same liver',opts:['No','Yes — upgrade by one grade (→ max III)']},
-   ],
-   gradeMap:r=>{
-     const v=[];
-     if(r[0]==='< 10% SA (→ I)') v.push(1); if(r[0]==='10–50% SA (→ II)') v.push(2); if(r[0]==='> 50% SA or ruptured (→ III)') v.push(3);
-     if(r[1]==='< 1 cm (→ I)') v.push(1); if(r[1]==='1–3 cm, ≤10 cm length (→ II)') v.push(2); if(r[1]==='> 3 cm (→ III)') v.push(3);
-     if(r[2]==='< 10 cm diameter (→ II)') v.push(2); if(r[2]==='> 10 cm or ruptured (→ III)') v.push(3);
-     if(r[3]==='Pseudoaneurysm or AVF, contained (→ III)') v.push(3);
-     if(r[3]==='Active bleed into peritoneum OR 25–75% lobar disruption (→ IV)') v.push(4);
-     if(r[3]==='> 75% lobar disruption or retrohepatic IVC injury (→ V)') v.push(5);
-     let base=v.length?Math.max(...v):0;
-     if(r[4]==='Yes — upgrade by one grade (→ max III)'&&base>=1&&base<=2) base=Math.min(base+1,3);
-     return base;
-   }
-  },
-  {id:'c-spleen',organ:'Spleen',headStyle:'background:linear-gradient(135deg,#2e7de0,#1a56a0)',
-   questions:[
-     {q:'Subcapsular haematoma',opts:['None','< 10% SA (→ I)','10–50% SA (→ II)','> 50% SA or ruptured (→ III)']},
-     {q:'Intraparenchymal haematoma',opts:['None','< 5 cm (→ II)','≥ 5 cm or ruptured (→ III)']},
-     {q:'Capsular laceration depth',opts:['None','< 1 cm (→ I)','1–3 cm (→ II)','> 3 cm (→ III)']},
-     {q:'Vascular / devascularisation',opts:['None','Pseudoaneurysm/AVF or contained active bleed (→ IV)','> 25% devascularisation (→ IV)','Shattered or active bleed into peritoneum (→ V)']},
-     {q:'Multiple grade I–II injuries in same spleen',opts:['No','Yes — upgrade by one grade (→ max III)']},
-   ],
-   gradeMap:r=>{
-     const v=[];
-     if(r[0]==='< 10% SA (→ I)') v.push(1); if(r[0]==='10–50% SA (→ II)') v.push(2); if(r[0]==='> 50% SA or ruptured (→ III)') v.push(3);
-     if(r[1]==='< 5 cm (→ II)') v.push(2); if(r[1]==='≥ 5 cm or ruptured (→ III)') v.push(3);
-     if(r[2]==='< 1 cm (→ I)') v.push(1); if(r[2]==='1–3 cm (→ II)') v.push(2); if(r[2]==='> 3 cm (→ III)') v.push(3);
-     if(r[3]==='Pseudoaneurysm/AVF or contained active bleed (→ IV)') v.push(4);
-     if(r[3]==='> 25% devascularisation (→ IV)') v.push(4);
-     if(r[3]==='Shattered or active bleed into peritoneum (→ V)') v.push(5);
-     let base=v.length?Math.max(...v):0;
-     if(r[4]==='Yes — upgrade by one grade (→ max III)'&&base>=1&&base<=2) base=Math.min(base+1,3);
-     return base;
-   }
-  },
-  {id:'c-kidney-r',organ:'Right kidney',headStyle:'background:linear-gradient(135deg,#e6a817,#c07800)',
-   questions:[
-     {q:'Haematoma',opts:['None','Subcapsular (no laceration) (→ I)','Perinephric within Gerota fascia (→ II)','Beyond Gerota fascia (→ IV)']},
-     {q:'Laceration depth',opts:['None','≤ 1 cm, no collecting system (→ II)','> 1 cm, no collecting system (→ III)','Into collecting system — urinary extravasation (→ IV)']},
-     {q:'Vascular injury',opts:['None','Segmental vessel injury (→ IV)','Main renal artery/vein or complete devascularisation (→ V)']},
-     {q:'Renal parenchyma status',opts:['Intact','Contusion (→ I)','Segmental infarction (→ IV)','Shattered kidney (→ V)']},
-   ],
-   gradeMap:r=>{
-     const v=[];
-     if(r[0]==='Subcapsular (no laceration) (→ I)') v.push(1); if(r[0]==='Perinephric within Gerota fascia (→ II)') v.push(2); if(r[0]==='Beyond Gerota fascia (→ IV)') v.push(4);
-     if(r[1]==='≤ 1 cm, no collecting system (→ II)') v.push(2); if(r[1]==='> 1 cm, no collecting system (→ III)') v.push(3); if(r[1]==='Into collecting system — urinary extravasation (→ IV)') v.push(4);
-     if(r[2]==='Segmental vessel injury (→ IV)') v.push(4); if(r[2]==='Main renal artery/vein or complete devascularisation (→ V)') v.push(5);
-     if(r[3]==='Contusion (→ I)') v.push(1); if(r[3]==='Segmental infarction (→ IV)') v.push(4); if(r[3]==='Shattered kidney (→ V)') v.push(5);
-     return v.length?Math.max(...v):0;
-   }
-  },
-  {id:'c-kidney-l',organ:'Left kidney',headStyle:'background:linear-gradient(135deg,#e07020,#a84800)',
-   questions:[
-     {q:'Haematoma',opts:['None','Subcapsular (no laceration) (→ I)','Perinephric within Gerota fascia (→ II)','Beyond Gerota fascia (→ IV)']},
-     {q:'Laceration depth',opts:['None','≤ 1 cm, no collecting system (→ II)','> 1 cm, no collecting system (→ III)','Into collecting system — urinary extravasation (→ IV)']},
-     {q:'Vascular injury',opts:['None','Segmental vessel injury (→ IV)','Main renal artery/vein or complete devascularisation (→ V)']},
-     {q:'Renal parenchyma status',opts:['Intact','Contusion (→ I)','Segmental infarction (→ IV)','Shattered kidney (→ V)']},
-   ],
-   gradeMap:r=>{
-     const v=[];
-     if(r[0]==='Subcapsular (no laceration) (→ I)') v.push(1); if(r[0]==='Perinephric within Gerota fascia (→ II)') v.push(2); if(r[0]==='Beyond Gerota fascia (→ IV)') v.push(4);
-     if(r[1]==='≤ 1 cm, no collecting system (→ II)') v.push(2); if(r[1]==='> 1 cm, no collecting system (→ III)') v.push(3); if(r[1]==='Into collecting system — urinary extravasation (→ IV)') v.push(4);
-     if(r[2]==='Segmental vessel injury (→ IV)') v.push(4); if(r[2]==='Main renal artery/vein or complete devascularisation (→ V)') v.push(5);
-     if(r[3]==='Contusion (→ I)') v.push(1); if(r[3]==='Segmental infarction (→ IV)') v.push(4); if(r[3]==='Shattered kidney (→ V)') v.push(5);
-     return v.length?Math.max(...v):0;
-   }
-  },
-  {id:'c-pancreas',organ:'Pancreas',headStyle:'background:linear-gradient(135deg,#7c4dca,#5030a0)',
-   questions:[
-     {q:'Contusion / laceration type',opts:['None','Minor contusion, no duct injury (→ I)','Major contusion, no duct injury (→ II)']},
-     {q:'Ductal injury location',opts:['None / unknown','Distal duct injury (→ III)','Proximal duct / ampullary injury (→ IV)','Massive disruption of pancreatic head (→ V)']},
-   ],
-   gradeMap:r=>{
-     const v=[];
-     if(r[0]==='Minor contusion, no duct injury (→ I)') v.push(1); if(r[0]==='Major contusion, no duct injury (→ II)') v.push(2);
-     if(r[1]==='Distal duct injury (→ III)') v.push(3); if(r[1]==='Proximal duct / ampullary injury (→ IV)') v.push(4); if(r[1]==='Massive disruption of pancreatic head (→ V)') v.push(5);
-     return v.length?Math.max(...v):0;
-   }
-  },
-  {id:'c-bladder',organ:'Bladder (Radiologic grade — Sandler et al.)',headStyle:'background:linear-gradient(135deg,#d03030,#a01010)',
-   questions:[
-     {q:'CT cystogram finding',opts:['None / normal','Focal wall thickening — no extravasation (→ 1)','Intraperitoneal rupture — contrast outlines bowel/peritoneal recesses (→ 2)','Interstitial injury — mucosal defect, no transmural leak (→ 3)','Extraperitoneal rupture simple — contrast confined to intrapelvic extraperitoneal space (→ 4a)','Extraperitoneal rupture complex — contrast tracks to abdominal wall/scrotum/perineum (→ 4b)','Combined intraperitoneal + extraperitoneal rupture (→ 5)']},
-   ],
-   gradeMap:r=>{
-     if(r[0]==='Focal wall thickening — no extravasation (→ 1)') return 1;
-     if(r[0]==='Intraperitoneal rupture — contrast outlines bowel/peritoneal recesses (→ 2)') return 2;
-     if(r[0]==='Interstitial injury — mucosal defect, no transmural leak (→ 3)') return 3;
-     if(r[0]==='Extraperitoneal rupture simple — contrast confined to intrapelvic extraperitoneal space (→ 4a)') return 4;
-     if(r[0]==='Extraperitoneal rupture complex — contrast tracks to abdominal wall/scrotum/perineum (→ 4b)') return 4;
-     if(r[0]==='Combined intraperitoneal + extraperitoneal rupture (→ 5)') return 5;
-     return 0;
-   }
-  },
-];
-
-const gradeColors=['','#e6f9ee','#e3f0ff','#fff8dc','#fff0e0','#fde8e8'];
-const gradeTextColors=['','#155c30','#0d3a7a','#6b4800','#7a3200','#7a0a0a'];
-const gradeBorderColors=['','#4caf7d','#2e7de0','#e6a817','#e07020','#d03030'];
-const gradeNames=['','I — Minor','II — Mild','III — Moderate','IV — Severe','V — Critical'];
-const gradeMgmt=['','Non-operative. Observation ward. Restrict activity per AAST guidelines.','Non-operative. Observation. Activity restriction. Monitor LFTs/Hb.','Non-operative if haemodynamically stable. ICU admission. Serial imaging recommended. Vascular injury (pseudoaneurysm/AVF) may require intervention.','Non-operative in stable children. Consider angioembolisation in adults. Close haemodynamic monitoring essential.','Haemodynamically unstable → surgical/endovascular intervention. Stable children may still be managed non-operatively with intensive monitoring.'];
-
-/* ---- Render grade cards ---- */
-function renderGrades(data,cid){
-  const c=document.getElementById(cid);
-  data.forEach(d=>{
-    const card=document.createElement('div');
-    card.className='grade-card '+d.c;
-    card.innerHTML=`<div class="grade-label">${'Grade '+d.g+' — '+d.label}</div><div class="grade-title">${d.title}</div>`;
-    const det=document.createElement('div');
-    det.className='grade-details';
-    det.style.display='none';
-    det.innerHTML='<ul>'+d.details.map(i=>`<li>${i}</li>`).join('')+'</ul>';
-    card.appendChild(det);
-    card.onclick=()=>{const o=det.style.display==='block';card.classList.toggle('expanded',!o);det.style.display=o?'none':'block';};
-    c.appendChild(card);
-  });
+function showScenario(id,btn){
+  document.querySelectorAll('.scenario-panel').forEach(p=>p.classList.remove('active'))
+  document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'))
+  document.getElementById('panel-'+id).classList.add('active')
+  btn.classList.add('active')
 }
-renderGrades(liverData,'liver-grades');
-renderGrades(spleenData,'spleen-grades');
-renderGrades(kidneyData,'kidney-grades');
-renderGrades(pancreasData,'pancreas-grades');
-renderGrades(bladderData,'bladder-grades');
-
-/* ---- Calculator ---- */
-const calcState={};
-const container=document.getElementById('calc-panels');
-const kidneyIds=new Set(['c-kidney-r','c-kidney-l']);
-calcData.forEach(organ=>{
-  calcState[organ.id]=Array(organ.questions.length).fill(null);
-  const panel=document.createElement('div');
-  panel.className='calc-panel';
-  panel.innerHTML=`<div class="calc-head" style="${organ.headStyle}">${organ.organ}</div><div class="calc-body" id="body-${organ.id}"></div>`;
-  container.appendChild(panel);
-  renderCalcPanel(organ);
-  // Insert bilateral panel right after left kidney
-  if(organ.id==='c-kidney-l'){
-    const bilPanel=document.createElement('div');
-    bilPanel.className='calc-panel';
-    bilPanel.style.gridColumn='1 / -1';
-    bilPanel.innerHTML=`<div class="calc-head" style="background:linear-gradient(135deg,#e6a817,#e07020)">Bilateral renal injury upgrade rule</div><div class="calc-body" id="body-bilateral"></div>`;
-    container.appendChild(bilPanel);
+function toggleItem(el,grp,cntId){
+  el.classList.toggle('selected')
+  if(cntId){
+    const cnt=document.querySelectorAll('[data-group="'+grp+'"].selected').length
+    const el2=document.getElementById(cntId)
+    if(el2)el2.textContent=cnt
   }
-});
-
-const genBtn=document.createElement('div');
-genBtn.style.cssText='grid-column:1/-1;margin-top:4px';
-genBtn.innerHTML=`<button class="btn-primary" onclick="generateFromCalc()">Generate report from calculator findings ↗</button>`;
-container.appendChild(genBtn);
-
-function getBilateralKidneyUpgrade(){
-  const rG=calcData.find(o=>o.id==='c-kidney-r').gradeMap(calcState['c-kidney-r'].map(v=>v||'None'));
-  const lG=calcData.find(o=>o.id==='c-kidney-l').gradeMap(calcState['c-kidney-l'].map(v=>v||'None'));
-  const both=rG>0&&lG>0;
-  const maxG=Math.max(rG,lG);
-  if(both&&maxG<=2) return{upgrade:true,from:maxG,to:Math.min(maxG+1,3)};
-  return{upgrade:false,rG,lG};
 }
+function toggleCheck(el){el.classList.toggle('checked')}
 
-function renderCalcPanel(organ){
-  const body=document.getElementById('body-'+organ.id);
-  body.innerHTML='';
-  organ.questions.forEach((q,qi)=>{
-    const qDiv=document.createElement('div');
-    qDiv.className='calc-q';
-    qDiv.innerHTML=`<label>${q.q}</label><div class="opts" id="opts-${organ.id}-${qi}"></div>`;
-    body.appendChild(qDiv);
-    const optsDiv=qDiv.querySelector('.opts');
-    q.opts.forEach(opt=>{
-      const btn=document.createElement('button');
-      btn.className='calc-opt'+(calcState[organ.id][qi]===opt?' sel':'');
-      btn.innerHTML=opt;
-      btn.onclick=()=>{calcState[organ.id][qi]=(calcState[organ.id][qi]===opt)?null:opt;renderCalcPanel(organ);if(organ.id==='c-kidney-r'||organ.id==='c-kidney-l') renderBilateral();};
-      optsDiv.appendChild(btn);
-    });
-  });
-  const responses=calcState[organ.id].map(v=>v||'None');
-  const grade=organ.gradeMap(responses);
-  const resultDiv=document.createElement('div');
-  resultDiv.className='calc-result';
-  if(grade===0){
-    resultDiv.style.cssText='background:var(--color-background-secondary,#f5f5f5);border:0.5px solid var(--color-border-tertiary,#ddd)';
-    resultDiv.innerHTML=`<div style="font-size:13px;color:var(--color-text-secondary,#666)">Select findings above to calculate grade.</div>`;
+function handleAgeChange(){
+  const age=document.getElementById('age-group').value
+  const pedSec=document.getElementById('ped-section')
+  const mogRec=document.getElementById('mog-rec')
+  const cvsRule=document.getElementById('cvs-rule')
+  if(age==='adult'){
+    pedSec.classList.remove('visible')
+    cvsRule.textContent='Select 6 method positive (≥6 CVS-positive lesions; majority if <10 lesions)'
   } else {
-    resultDiv.style.cssText=`background:${gradeColors[grade]};border:2px solid ${gradeBorderColors[grade]}`;
-    resultDiv.innerHTML=`<div class="grade-big" style="color:${gradeTextColors[grade]}">${organ.organ} — Grade ${gradeNames[grade]}</div><div style="font-size:12.5px;color:${gradeTextColors[grade]};opacity:.85;line-height:1.6">${gradeMgmt[grade]}</div>`;
+    pedSec.classList.add('visible')
+    if(age==='pedlt12'){
+      mogRec.textContent='Strongly recommended in all children <12 yrs with incident CNS demyelination.'
+    } else {
+      mogRec.textContent='Recommended in 12–17 yrs only if presentation is atypical or suggestive of MOGAD — not routinely for all.'
+    }
+    cvsRule.textContent='Paediatric rule: CVS in >50% of T2 lesions (not select 6)'
   }
-  const resetBtn=document.createElement('button');
-  resetBtn.className='calc-reset';
-  resetBtn.textContent='Reset '+organ.organ;
-  resetBtn.onclick=()=>{calcState[organ.id]=Array(organ.questions.length).fill(null);renderCalcPanel(organ);if(organ.id==='c-kidney-r'||organ.id==='c-kidney-l') renderBilateral();};
-  body.appendChild(resultDiv);
-  body.appendChild(resetBtn);
 }
 
-function renderBilateral(){
-  const body=document.getElementById('body-bilateral');
-  const bi=getBilateralKidneyUpgrade();
-  const rG=calcData.find(o=>o.id==='c-kidney-r').gradeMap(calcState['c-kidney-r'].map(v=>v||'None'));
-  const lG=calcData.find(o=>o.id==='c-kidney-l').gradeMap(calcState['c-kidney-l'].map(v=>v||'None'));
-  if(rG===0&&lG===0){
-    body.innerHTML=`<p style="font-size:13px;color:var(--color-text-secondary,#666);padding:8px 0">Grade both kidneys above. If both are injured at grade I–II, the overall renal grade is upgraded by one (max grade III) per AAST-OIS 2018.</p>`;
-    return;
+function handleProgressiveChange(){
+  const isProgressive=document.getElementById('progressive-chk').classList.contains('checked')
+  document.getElementById('sc-progressive-box').style.display=isProgressive?'block':'none'
+  document.getElementById('sc-desc').textContent=isProgressive?'≥1 lesion (≥2 = DIS alone if progressive ≥12 mo)':'≥1 cord lesion'
+}
+
+function evaluateTypical(){
+  const age=document.getElementById('age-group').value
+  const isPed=(age==='pedlt12'||age==='ped12to17')
+  const isProgressive=document.getElementById('progressive-chk').classList.contains('checked')
+  const sc2confirmed=document.getElementById('sc2-chk').classList.contains('checked')
+  const ademChecked=document.getElementById('adem-chk').classList.contains('checked')
+  const mogChecked=document.getElementById('mog-chk').classList.contains('checked')
+
+  if(isPed&&ademChecked){
+    showResult('typical','warning','⚠ ADEM — Defer MS Criteria','ADEM presentation noted. <strong>Do not apply MS diagnostic criteria at this time.</strong> A second typical MS attack or new T2 lesions in MS-typical anatomical locations more than <strong>90 days after ADEM onset</strong> is required before McDonald criteria can be applied.')
+    return
   }
-  if(bi.upgrade){
-    body.innerHTML=`<div class="calc-result" style="background:${gradeColors[bi.to]};border:2px solid ${gradeBorderColors[bi.to]}"><div class="grade-big" style="color:${gradeTextColors[bi.to]}">Bilateral renal injury — upgraded to Grade ${gradeNames[bi.to]}</div><div style="font-size:12.5px;color:${gradeTextColors[bi.to]};opacity:.85;line-height:1.6">Both kidneys injured (R: Grade ${rG}, L: Grade ${lG}). Multiple grade I–II injuries upgraded by one grade (→ max III) per AAST-OIS 2018.<br>${gradeMgmt[bi.to]}</div></div>`;
-  } else if(rG>0&&lG>0){
-    const mx=Math.max(rG,lG);
-    body.innerHTML=`<div class="calc-result" style="background:${gradeColors[mx]};border:2px solid ${gradeBorderColors[mx]}"><div class="grade-big" style="color:${gradeTextColors[mx]}">Bilateral renal injury — Overall Grade ${gradeNames[mx]}</div><div style="font-size:12.5px;color:${gradeTextColors[mx]};opacity:.85;line-height:1.6">R: Grade ${rG}, L: Grade ${lG}. Upgrade rule applies only when both sides are grade I–II. Overall = highest individual grade.<br>${gradeMgmt[mx]}</div></div>`;
+  if(isPed&&age==='pedlt12'&&!mogChecked){
+    showResult('typical','warning','⚠ MOG-IgG Testing Required First','For children under 12 years, MOG-IgG testing using a <strong>cell-based assay is strongly recommended</strong> before diagnosing MS. MOGAD is relatively more prevalent in this age group and overlaps clinically and radiologically with MS.')
+    return
+  }
+
+  const locs=document.querySelectorAll('[data-group="loc-typ"].selected').length
+  const addl=document.getElementById('additional-typ')
+  const checks=addl.querySelectorAll('.check-item.checked')
+  const hasDIT=Array.from(checks).some(c=>c.querySelector('.check-label').textContent.includes('DIT'))
+  const hasCSF=Array.from(checks).some(c=>c.querySelector('.check-label').textContent.includes('CSF'))
+  const hasCVS=Array.from(checks).some(c=>c.querySelector('.check-label').textContent.includes('CVS'))
+  const hasPRL=Array.from(checks).some(c=>c.querySelector('.check-label').textContent.includes('PRL'))
+  const pedNote=isPed?' The paediatric-specific CVS rule (>50% of lesions) has been applied.':''
+
+  // Progressive ≥12 months + ≥2 spinal cord lesions = DIS fulfilled on its own
+  if(isProgressive&&sc2confirmed){
+    if(hasDIT||hasCSF){
+      showResult('typical','positive','✓ MS Diagnosis Supported (Progressive)','Progressive disease ≥12 months with <strong>≥2 spinal cord lesions fulfilling DIS</strong>, combined with '+(hasDIT?'DIT on MRI ':'')+(hasDIT&&hasCSF?'and ':'')+(hasCSF?'positive CSF ':'')+'— MS criteria are met. Exclude other progressive neurological disorders (e.g. hereditary myelopathies, vascular).'+pedNote)
+    } else if(hasCVS){
+      showResult('typical','positive','✓ MS Diagnosis Supported (Progressive)','Progressive disease ≥12 months with <strong>≥2 spinal cord lesions (DIS)</strong> and positive CVS — MS criteria are met.'+pedNote)
+    } else if(locs>=4){
+      showResult('typical','positive','✓ MS Diagnosis Supported (Progressive)','Progressive disease ≥12 months. ≥2 spinal cord lesions fulfil DIS plus ≥4 total CNS locations affected — <strong>MS criteria are fulfilled without further requirements</strong>.'+pedNote)
+    } else {
+      showResult('typical','negative','⚠ DIS Fulfilled — Additional Evidence Needed (Progressive)','Progressive disease ≥12 months with ≥2 spinal cord lesions satisfies DIS. However, at least one additional criterion is still required: DIT on MRI, positive CSF (OCBs or kFLC), or CVS positivity.')
+    }
+    return
+  }
+
+  if(locs>=4){
+    showResult('typical','positive','✓ MS Diagnosis Supported','With ≥4 of 5 CNS anatomical locations showing typical lesions and a characteristic clinical presentation, <strong>MS criteria are fulfilled without additional requirements</strong> (provided no better explanation). Highest diagnostic confidence tier.'+pedNote)
+  } else if(locs>=2&&(hasDIT||hasCSF)){
+    showResult('typical','positive','✓ MS Diagnosis Supported','DIS fulfilled ('+locs+' locations). Combined with '+(hasDIT?'DIT on MRI ':'')+(hasDIT&&hasCSF?'and ':'')+(hasCSF?'positive CSF ':'')+'<strong>MS criteria are met</strong>. Ensure no better explanation (exclude NMOSD, MOGAD, vascular).'+pedNote)
+  } else if(locs>=2&&hasCVS){
+    showResult('typical','positive','✓ MS Diagnosis Supported','DIS fulfilled ('+locs+' locations) with <strong>positive CVS</strong>. CVS positivity with DIS is sufficient for diagnosis in typical presentations.'+pedNote)
+  } else if(locs===1&&hasCVS&&(hasDIT||hasCSF)){
+    showResult('typical','positive','✓ MS Diagnosis Supported','Single CNS region + CVS + '+(hasDIT?'DIT':'positive CSF')+'. This combination is sufficient for MS diagnosis per 2024 criteria.'+pedNote)
+  } else if(locs===1&&hasPRL&&(hasDIT||hasCSF)){
+    showResult('typical','positive','✓ MS Diagnosis Supported','Single CNS region + ≥1 PRL + '+(hasDIT?'DIT':'positive CSF')+'. This combination is sufficient for MS diagnosis per 2024 criteria.'+pedNote)
+  } else if(locs>=2&&!hasDIT&&!hasCSF&&!hasCVS&&!hasPRL){
+    showResult('typical','negative','⚠ Criteria Not Yet Met','DIS is fulfilled ('+locs+' locations), but no DIT, positive CSF, CVS, or PRL confirmed. At least one additional criterion is required. Consider MRI follow-up, lumbar puncture, or CVS/PRL assessment.'+pedNote)
+  } else if(locs===1){
+    showResult('typical','negative','⚠ Criteria Not Yet Met','Only 1 CNS location affected — DIS not fulfilled. You need ≥2 locations, or CVS + DIT/CSF, or PRL + DIT/CSF to diagnose MS from a single region.'+(isProgressive?' For progressive disease: confirm ≥2 spinal cord lesions and tick the confirmation box above.':'')+pedNote)
   } else {
-    const side=rG>0?'Right':'Left';const g=Math.max(rG,lG);
-    body.innerHTML=`<div class="calc-result" style="background:${gradeColors[g]};border:2px solid ${gradeBorderColors[g]}"><div class="grade-big" style="color:${gradeTextColors[g]}">${side} kidney only — Grade ${gradeNames[g]}</div><div style="font-size:12.5px;color:${gradeTextColors[g]};opacity:.85;line-height:1.6">Only one kidney injured — bilateral upgrade rule does not apply.<br>${gradeMgmt[g]}</div></div>`;
+    showResult('typical','negative','⚠ Insufficient Data','Please select CNS locations and relevant additional findings to evaluate.')
   }
 }
-renderBilateral();
 
-/* ---- Generate from calc ---- */
-function getCalcGrade(id){const o=calcData.find(x=>x.id===id);return o?o.gradeMap(calcState[id].map(v=>v||'None')):0;}
-function getCalcDesc(id){return calcState[id].filter(Boolean).map(s=>s.replace(/\s*\(→\s*[IVX]+\)/g,'')).join('; ');}
-
-function generateFromCalc(){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('report').classList.add('active');
-  document.querySelectorAll('.tab').forEach(t=>{if(t.textContent.trim()==='Report template') t.classList.add('active');});
-  const bi=getBilateralKidneyUpgrade();
-  const rG=getCalcGrade('c-kidney-r'),lG=getCalcGrade('c-kidney-l');
-  const rkF=bi.upgrade?bi.to:rG,lkF=bi.upgrade?bi.to:lG;
-  const numToRoman=['','I','II','III','IV','V'];
-  const organs=[
-    {selId:'r-liver',descId:'r-liver-d',grade:getCalcGrade('c-liver'),desc:getCalcDesc('c-liver')},
-    {selId:'r-spleen',descId:'r-spleen-d',grade:getCalcGrade('c-spleen'),desc:getCalcDesc('c-spleen')},
-    {selId:'r-rk',descId:'r-rk-d',grade:rkF,desc:getCalcDesc('c-kidney-r')+(bi.upgrade?' [upgraded: bilateral injury]':'')},
-    {selId:'r-lk',descId:'r-lk-d',grade:lkF,desc:getCalcDesc('c-kidney-l')+(bi.upgrade?' [upgraded: bilateral injury]':'')},
-    {selId:'r-panc',descId:'r-panc-d',grade:getCalcGrade('c-pancreas'),desc:getCalcDesc('c-pancreas')},
-    {selId:'r-blad',descId:'r-blad-d',grade:getCalcGrade('c-bladder'),desc:getCalcDesc('c-bladder')},
-  ];
-  organs.forEach(o=>{
-    const sel=document.getElementById(o.selId),inp=document.getElementById(o.descId);
-    if(sel) sel.value=o.grade>0?numToRoman[o.grade]:'';
-    if(inp&&o.desc) inp.value=o.desc;
-  });
-  genReport();
-  document.getElementById('report-out').scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-/* ---- Report ---- */
-function v(id){return document.getElementById(id).value.trim()}
-
-function genReport(){
-  const d=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
-  const organs=[
-    {label:'Liver',grade:v('r-liver'),desc:v('r-liver-d')},
-    {label:'Spleen',grade:v('r-spleen'),desc:v('r-spleen-d')},
-    {label:'Right kidney',grade:v('r-rk'),desc:v('r-rk-d')},
-    {label:'Left kidney',grade:v('r-lk'),desc:v('r-lk-d')},
-    {label:'Pancreas',grade:v('r-panc'),desc:v('r-panc-d')},
-    {label:'Bladder',grade:v('r-blad'),desc:v('r-blad-d')},
-  ];
-  const injured=organs.filter(o=>o.grade),normal=organs.filter(o=>!o.grade);
-  let txt=`CT ABDOMEN & PELVIS — PAEDIATRIC TRAUMA REPORT\n`;
-  txt+=`Date: ${d}\n`;
-  if(v('r-age')) txt+=`Patient: ${v('r-age')}${v('r-sex')?', '+v('r-sex'):''}\n`;
-  if(v('r-mech')) txt+=`Mechanism: ${v('r-mech')}\n`;
-  if(v('r-pres')) txt+=`Presentation: ${v('r-pres')}\n`;
-  txt+=`\nTECHNIQUE\n${v('r-tech')}. Coverage from lower thorax to pubic symphysis.\n`;
-  txt+=`\nFINDINGS\n`;
-  if(injured.length){
-    txt+=`SOLID ORGAN INJURIES (AAST-OIS 2018):\n`;
-    injured.forEach(o=>{txt+=`  ${o.label}: Grade ${o.grade}`;if(o.desc) txt+=` — ${o.desc}`;txt+='\n';});
-  }
-  if(normal.length) txt+=`\nNormal organs: ${normal.map(o=>o.label).join(', ')}.\n`;
-  const vasc=v('r-vasc');if(vasc&&vasc!=='None identified') txt+=`\nVASCULAR INJURY: ${vasc}.\n`;
-  const fluid=v('r-fluid');if(fluid&&fluid!=='None') txt+=`\nFREE FLUID: ${fluid}.\n`;
-  const bowel=v('r-bowel');if(bowel&&bowel!=='Normal') txt+=`\nBOWEL / MESENTERY: ${bowel}.\n`;
-  const bone=v('r-bone');if(bone) txt+=`\nSKELETAL: ${bone}.\n`;
-  if(v('r-hypo')==='Present') txt+=`\nHYPOPERFUSION COMPLEX: Features present — urgent clinical correlation.\n`;
-  const adren=v('r-adren');if(adren&&adren!=='None') txt+=`\nADRENAL: ${adren}.\n`;
-  const extra=v('r-extra');if(extra) txt+=`\nADDITIONAL: ${extra}\n`;
-  txt+=`\nIMPRESSION\n`;
-  if(!injured.length) txt+=`No solid organ injury identified on this examination.\n`;
-  else injured.forEach(o=>{txt+=`${o.label} injury — AAST-OIS Grade ${o.grade}.\n`;});
-  if(vasc&&vasc!=='None identified') txt+=`${vasc}.\n`;
-  if(v('r-hypo')==='Present') txt+=`Hypoperfusion complex — haemodynamic instability.\n`;
-  txt+=`\n[Report generated with AAST-OIS 2018 grading system]\n`;
-  txt+=`[Paediatric management determined by haemodynamic stability, not CT grade alone]\n`;
-  txt+=`[Ref: Mohammad et al., Pediatric Radiology 2025. DOI: 10.1007/s00247-025-06321-3]`;
-  document.getElementById('report-out').textContent=txt;
-}
-
-/* ---- Copy with robust fallback ---- */
-function showToast(msg){
-  const t=document.getElementById('copy-toast');
-  t.textContent=msg||'✓ Copied to clipboard';
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-function copyReport(){
-  const el=document.getElementById('report-out');
-  const txt=el.textContent;
-  if(!txt||txt==='Fill in the fields above and click "Generate report".'){
-    showToast('⚠ Generate a report first');
-    return;
-  }
-  // Try modern clipboard API first
-  if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(txt).then(()=>{
-      showToast('✓ Copied to clipboard');
-    }).catch(()=>fallbackCopy(txt));
+function evaluateRIS(){
+  const locs=document.querySelectorAll('[data-group="loc-ris"].selected').length
+  const anyFeature=document.querySelectorAll('#additional-ris .check-item.checked').length>0
+  if(locs<2){
+    showResult('ris','negative','⚠ RIS Criteria Not Met','Fewer than 2 CNS locations selected. RIS requires lesions in ≥2 anatomical locations before additional criteria apply.')
+  } else if(anyFeature){
+    showResult('ris','positive','✓ RIS Qualifies as MS Diagnosis','Lesions in ≥2 CNS locations PLUS at least one confirmatory feature. Per 2024 criteria, <strong>this RIS presentation fulfils MS diagnostic criteria</strong>. Always exclude mimics and ensure no symptoms were missed.')
   } else {
-    fallbackCopy(txt);
+    showResult('ris','negative','⚠ Criteria Not Fully Met','DIS present ('+locs+' locations) but no additional feature confirmed. At least one of DIT, positive CSF, or CVS select 6 is required. Monitor and counsel regarding ~51% risk of clinical conversion within 10 years.')
   }
 }
 
-function fallbackCopy(txt){
-  try{
-    const ta=document.createElement('textarea');
-    ta.value=txt;
-    ta.style.cssText='position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;pointer-events:none';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    const ok=document.execCommand('copy');
-    document.body.removeChild(ta);
-    showToast(ok?'✓ Copied to clipboard':'⚠ Copy failed — please select text manually');
-  }catch(e){
-    showToast('⚠ Copy failed — please select text manually');
+function evaluateOlder(){
+  const allChecks=document.querySelectorAll('#panel-older .check-item.checked')
+  const hasDIS=Array.from(allChecks).some(c=>c.querySelector('.check-label').textContent.includes('DIS'))
+  const hasClinical=Array.from(allChecks).some(c=>c.querySelector('.check-label').textContent.includes('attack'))
+  const confirmCount=Array.from(allChecks).filter(c=>{const t=c.querySelector('.check-label').textContent;return t.includes('spinal')||t.includes('CSF')||t.includes('CVS')}).length
+  if(!hasDIS||!hasClinical){
+    showResult('older','warning','⚠ Standard Criteria Incomplete','Please confirm both DIS (≥2 locations) and a typical attack or ≥12 months progression before applying age-specific recommendations.')
+    return
+  }
+  if(confirmCount===0){
+    showResult('older','negative','⚠ Additional Tests Strongly Recommended','Standard criteria alone are insufficient in patients aged ≥50 or with vascular risk factors. At least one of: spinal cord lesion, positive CSF, or CVS select 6 positivity is <strong>strongly recommended</strong> to reduce misdiagnosis risk from small vessel disease or migraine-related WMLs.')
+  } else {
+    showResult('older','positive','✓ MS Diagnosis Supported','Standard criteria met with '+confirmCount+' additional confirmatory test(s) positive. This provides adequate specificity for MS diagnosis in this higher-risk group. Small vessel disease and migraine-related WMLs should be explicitly documented as excluded.')
   }
 }
 
-function clearReport(){
-  ['r-age','r-liver-d','r-spleen-d','r-rk-d','r-lk-d','r-panc-d','r-blad-d','r-bone','r-extra'].forEach(id=>document.getElementById(id).value='');
-  ['r-sex','r-mech','r-liver','r-spleen','r-rk','r-lk','r-panc','r-blad','r-vasc','r-fluid','r-bowel','r-hypo','r-adren'].forEach(id=>document.getElementById(id).selectedIndex=0);
-  document.getElementById('r-tech').selectedIndex=0;
-  document.getElementById('r-pres').value='';
-  document.getElementById('report-out').textContent='Fill in the fields above and click "Generate report".';
+function showResult(id,type,title,msg){
+  const box=document.getElementById('result-'+id)
+  box.className='result-box '+type
+  box.style.display='block'
+  box.innerHTML='<div class="result-title">'+title+'</div><div class="result-text">'+msg+'</div>'
+  box.scrollIntoView({behavior:'smooth',block:'nearest'})
 }
 
-/* ---- Tab switcher ---- */
-function show(id,btn){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
+function resetTypical(){
+  document.querySelectorAll('[data-group="loc-typ"]').forEach(el=>el.classList.remove('selected'))
+  document.querySelectorAll('#additional-typ .check-item').forEach(el=>el.classList.remove('checked'))
+  document.querySelectorAll('#ped-section .check-item').forEach(el=>el.classList.remove('checked'))
+  document.getElementById('loc-count-typ').textContent='0'
+  document.getElementById('age-group').value='adult'
+  document.getElementById('ped-section').classList.remove('visible')
+  document.getElementById('cvs-rule').textContent='Select 6 method positive (≥6 CVS-positive lesions; majority if <10 lesions)'
+  document.getElementById('progressive-chk').classList.remove('checked')
+  document.getElementById('sc2-chk').classList.remove('checked')
+  document.getElementById('sc-progressive-box').style.display='none'
+  document.getElementById('sc-desc').textContent='≥1 cord lesion'
+  document.getElementById('result-typical').style.display='none'
+}
+
+function resetPanel(id){
+  const panel=document.getElementById('panel-'+id)
+  panel.querySelectorAll('.criteria-item').forEach(el=>el.classList.remove('selected'))
+  panel.querySelectorAll('.check-item').forEach(el=>el.classList.remove('checked'))
+  const cnt=panel.querySelector('[id^="loc-count"]')
+  if(cnt)cnt.textContent='0'
+  const res=document.getElementById('result-'+id)
+  if(res)res.style.display='none'
 }
 </script>
 </body>
