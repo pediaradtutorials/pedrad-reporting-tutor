@@ -1,2 +1,2 @@
-Pediatric trauma imaging guidelines
+Pediatric Radiology Reporting guidelines
 Developed by Prof. Shaimaa AbdelSattar
